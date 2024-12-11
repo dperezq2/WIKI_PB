@@ -34,7 +34,7 @@ function toggleEntry(entryId) {
             <div class="modal-section">
                 <h3>${titleElement.innerText}</h3>
                 <p>${entryContent}</p>  <!-- Mostrar contenido completo -->
-                <small>Autores: ${authorElement.innerText}</small>
+                <small>${authorElement.innerText}</small>
             </div>
         `;
     } else {

@@ -42,33 +42,34 @@ body {
 
 /* Estilo para el encabezado */
 .header {
-    background-color: white;
+    background-color: #333333; /* Fondo negro */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 15px 5%;
     position: sticky;
     top: 0;
     z-index: 100;
+    text-align: center; /* Centrar elementos dentro del header */
 }
 
+/* Estilo para el contenedor del logo y título */
 .header-logo {
     display: flex;
-    align-items: center;
+    flex-direction: column; /* Coloca el logo y título en columna */
+    align-items: center; /* Centra horizontalmente */
     text-align: center;
 }
 
+/* Ajustes del logo */
 .header-logo img {
-    margin-right: 15px;
-    width: 100px;  /* Ajusta el tamaño según necesites */
+    margin-bottom: 10px; /* Espaciado entre logo y título */
+    width: 100px;
     height: 100px;
 }
 
+/* Estilo para el título */
 .header-title {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #333;
+    color: white;
     margin: 0;
 }
 
@@ -210,3 +211,16 @@ body {
     height: 100px; /* Ajusta el tamaño de las imágenes según necesites */
     object-fit: cover; /* Asegura que las imágenes mantengan la proporción */
 }
+
+
+/* Estilos para el banner animado */
+.animated-banner {
+    overflow: hidden;
+    position: relative;
+    height: 50px; /* Ajusta según el tamaño de tu texto */
+    color: white;
+    font-size: 0.8955rem;
+    text-align: center;
+    white-space: nowrap;
+}
+

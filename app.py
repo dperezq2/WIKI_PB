@@ -20,4 +20,4 @@ def index():
     return render_template("index.html", entries=entries, query=query, search_type=search_type)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='127.0.0.1', port=3000, debug=True)
