@@ -1,0 +1,212 @@
+/* Estilos generales para la página */
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Contenedor principal */
+.container {
+    width: 60vw;
+    margin: auto;
+    overflow: hidden;
+    padding: 20px;
+}
+
+/* Estilo para las opciones de búsqueda */
+.search-options {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.search-options input {
+    flex-grow: 1;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.search-options select {
+    padding: 10px;
+    margin-right: 10px;
+}
+
+.search-options button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* Estilo para el encabezado */
+.header {
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 5%;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.header-logo img {
+    margin-right: 15px;
+    width: 100px;  /* Ajusta el tamaño según necesites */
+    height: 100px;
+}
+
+.header-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+/* Estilos para las entradas de la wiki */
+.entries .entry {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+    max-height: 150px; /* Limitar la altura */
+    overflow: hidden; /* Ocultar contenido adicional */
+    position: relative;
+    margin-bottom: 20px;
+    transition: max-height 0.5s ease-out;
+}
+
+.entries .entry:last-child {
+    border-bottom: none;
+}
+
+.entries h3 {
+    margin-bottom: 10px;
+}
+
+.entries small {
+    color: #777;
+}
+
+/* Estilos del enlace "Ver más" */
+.entry .view-more {
+    display: block;
+    color: #007BFF;
+    text-decoration: underline;
+    font-weight: bold;
+    margin-top: 10px;
+    cursor: pointer;
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+}
+
+.entry .view-more:hover {
+    color: #0056b3;
+}
+
+/* Estilos para el contenido expandido */
+.entry-details {
+    display: none;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+    transition: max-height 0.5s ease-in-out;
+    background-color: #f9f9f9;
+    max-height: none;
+}
+
+.entry-details h3 {
+    margin-bottom: 10px;
+}
+
+/* Botón "Regresar" */
+.back-button {
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
+/* Ocultar y mostrar elementos */
+.hidden {
+    display: none;
+}
+
+/* Caja para archivos adjuntos */
+.modal-section-attachments {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-section-attachments h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.modal-section-attachments ul {
+    list-style: none;
+    padding: 0;
+}
+
+.modal-section-attachments ul li {
+    margin: 5px 0;
+}
+
+.modal-section-attachments ul li a {
+    text-decoration: none;
+    color: #007BFF;
+}
+
+.modal-section-attachments ul li a:hover {
+    color: #0056b3;
+}
+
+/* Caja para imágenes */
+.modal-section-images {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-section-images h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.modal-section-images .images {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.modal-section-images .images img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100px; /* Ajusta el tamaño de las imágenes según necesites */
+    height: 100px; /* Ajusta el tamaño de las imágenes según necesites */
+    object-fit: cover; /* Asegura que las imágenes mantengan la proporción */
+}

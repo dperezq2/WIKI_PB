@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="wiki-container">
+    <form action="/" method="post">
+    <div class="search-options">
+        <input type="text" name="query" value="{{ query }}" placeholder="Buscar..." >
+        
+        <select name="search_type">
+            <option value="title" {% if search_type == 'title' %}selected{% endif %}>Título</option>
+            <option value="content" {% if search_type == 'content' %}selected{% endif %}>Contenido</option>
+            <option value="authors" {% if search_type == 'authors' %}selected{% endif %}>Autores</option>
+        </select>
+        
+        <button type="submit">Buscar</button>
+    </div>
+</form>
+
+
+    <div class="entries">
+        {% if query %}
+            <!-- Si hay una consulta de búsqueda, mostramos los resultados de búsqueda -->
+            <h2>Resultados para: "{{ query }}"</h2>
+            {% if entries %}
+                
+                <div class="entry-list">
+                <p><strong>{{ entries|length }}</strong> resultado(s) encontrado(s).</p>
+                    {% for entry in entries %}
+                        <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
+                            <div class="entry-summary">
+                                <h3>{{ entry.title }}</h3>
+                                <p>{{ entry.content[:300] }}...</p>
+                                <small>Autores: {{ ', '.join(entry.authors) }}</small>
+                                <button class="view-more" onclick="toggleEntry('entry-{{ loop.index }}')">Ver más</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No se encontraron resultados para la búsqueda.</p>
+            {% endif %}
+        {% else %}
+            <!-- Si no hay búsqueda, mostramos todas las entradas -->
+            <h2>Todas las Entradas</h2>
+            <p><strong>{{ entries|length }}</strong> resultado(s) encontrado(s).</p>
+            <div class="entry-list">
+                {% for entry in entries %}
+                    <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
+                        <div class="entry-summary">
+                            <h3>{{ entry.title }}</h3>
+                            <p>{{ entry.content[:200] }}...</p>
+                            <small>Autores: {{ ', '.join(entry.authors) }}</small>
+                            <button class="view-more" onclick="toggleEntry('entry-{{ loop.index }}')">Ver más</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+    </div>
+
+    <!-- Detalles de la entrada (inicialmente ocultos) -->
+    <div id="entry-details-container" class="entry-details-container hidden">
+        <button class="back-button" onclick="goBack()">&#8592; Regresar</button>
+        <div id="entry-details-content"></div>
+    </div>
+    
+</div>
+
+{% endblock %}
