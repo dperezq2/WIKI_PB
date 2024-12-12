@@ -224,3 +224,193 @@ body {
     white-space: nowrap;
 }
 
+
+
+
+/* Estilos existentes ... */
+
+/* Estilos para botón de Agregar Entrada */
+.add-entry-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.add-entry-button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.add-entry-button:hover {
+    background-color: #218838;
+}
+
+/* Estilos para el formulario de agregar entrada */
+.add-entry-form-container {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.add-entry-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-entry-form h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.cancel-button,
+.submit-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.cancel-button {
+    background-color: #6c757d;
+    color: white;
+}
+
+.submit-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.cancel-button:hover {
+    background-color: #545b62;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Media Queries for Fine-Tuning */
+@media screen and (min-width: 768px) {
+    /* Tablet and Desktop Styles */
+    .header-title {
+        font-size: 2.2rem;
+    }
+
+    .search-options button {
+        width: auto;
+    }
+
+    .form-actions {
+        flex-direction: row;
+    }
+
+    .cancel-button,
+    .submit-button {
+        width: auto;
+        margin: 0 5px;
+    }
+}
+
+/* Responsive Header */
+@media screen and (max-width: 767px) {
+    .header {
+        padding: 10px;
+    }
+
+    .header-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .header-logo img {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 10px;
+    }
+
+    .header-title {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    /* Asegurar que los botones de "Ver más" sean visibles */
+    .entries .entry {
+        position: relative;
+        max-height: none;
+    }
+
+    .entry .view-more {
+        position: relative;
+        display: block;
+        margin-top: 10px;
+        text-align: right;
+        bottom: auto;
+        right: auto;
+    }
+
+    /* Ajustes adicionales para mantener la funcionalidad */
+    .container {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .search-options {
+        flex-direction: column;
+    }
+
+    .search-options input, 
+    .search-options select, 
+    .search-options button {
+        margin: 5px 0;
+    }
+
+    .animated-banner {
+        height: auto;
+        padding: 10px;
+        white-space: normal;
+    }
+}
