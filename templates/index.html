@@ -56,6 +56,47 @@
                 <input type="text" id="entry-authors" name="entry-authors" required>
             </div>
 
+            <!-- New Image Upload Section -->
+        <div class="upload-section">
+            <h3>Subir Imágenes</h3>
+            <div class="image-upload-container">
+                <input 
+                    type="file" 
+                    id="image-upload" 
+                    name="images" 
+                    accept="image/jpeg,image/png,image/gif,image/webp" 
+                    multiple 
+                    class="image-upload-input"
+                >
+                <label for="image-upload" class="image-upload-label">
+                    Seleccionar Imágenes
+                </label>
+            </div>
+            <div id="image-preview-list" class="image-preview-list">
+                <!-- Image previews will be dynamically added here -->
+            </div>
+        </div>
+
+        <!-- New File Upload Section -->
+        <div class="upload-section">
+            <h3>Adjuntar Archivos</h3>
+            <div class="file-upload-container">
+                <input 
+                    type="file" 
+                    id="file-upload" 
+                    name="files" 
+                    accept=".pdf,.doc,.docx,.txt,.xlsx,.csv" 
+                    multiple 
+                    class="file-upload-input"
+                >
+                <label for="file-upload" class="file-upload-label">
+                    Seleccionar Archivos
+                </label>
+            </div>
+            <div id="file-list" class="file-list">
+                <!-- File items will be dynamically added here -->
+            </div>
+</div>
             <div class="form-actions">
                 <button type="button" class="cancel-button" onclick="hideAddEntryForm()">Cancelar</button>
                 <button type="submit" class="submit-button">Enviar Entrada</button>

@@ -331,6 +331,118 @@ body {
 }
 
 
+/* Styles for file and image upload sections */
+.upload-section {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.upload-section h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.file-upload-container,
+.image-upload-container {
+    border: 2px dashed #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+.file-upload-container:hover,
+.image-upload-container:hover {
+    background-color: #f0f0f0;
+}
+
+.file-upload-input,
+.image-upload-input {
+    display: none;
+}
+
+.file-upload-label,
+.image-upload-label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.file-upload-label:hover,
+.image-upload-label:hover {
+    background-color: #0056b3;
+}
+
+.file-list,
+.image-preview-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.file-item,
+.image-preview-item {
+    display: flex;
+    align-items: center;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.file-item-name,
+.image-preview-item img {
+    margin-right: 10px;
+}
+
+.file-remove-btn,
+.image-remove-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 12px;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}
+
+.file-remove-btn:hover,
+.image-remove-btn:hover {
+    background-color: #c82333;
+}
+
+.image-preview-item {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    position: relative;
+}
+
+.image-preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
 /* Media Queries for Fine-Tuning */
 @media screen and (min-width: 768px) {
     /* Tablet and Desktop Styles */
@@ -412,5 +524,10 @@ body {
         height: auto;
         padding: 10px;
         white-space: normal;
+    }
+
+    .file-item,
+    .image-preview-item {
+        flex-basis: 100%;
     }
 }
