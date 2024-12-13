@@ -1,126 +1,67 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="wiki-container">
-    <form action="/" method="post">
-    <div class="search-options">
-        <input type="text" name="query" value="{{ query }}" placeholder="Buscar..." >
-        
-        <select name="search_type">
-            <option value="title" {% if search_type == 'title' %}selected{% endif %}>Título</option>
-            <option value="content" {% if search_type == 'content' %}selected{% endif %}>Contenido</option>
-            <option value="authors" {% if search_type == 'authors' %}selected{% endif %}>Autores</option>
-        </select>
-        
-        <button type="submit">Buscar</button>
-    </div>
-</form>
-
- <!-- Botón para Agregar Entrada -->
-    <div class="add-entry-section">
-        <button class="add-entry-button" onclick="showAddEntryFormWithValidation()">+ Agregar Entrada</button>
-    </div>
-
-    <!-- Formulario de Agregar Entrada (inicialmente oculto) -->
-    <div id="add-entry-form-container" class="add-entry-form-container hidden">
-        <form id="add-entry-form" class="add-entry-form">
-            <h2>Agregar Nueva Entrada</h2>
-            
-            <div class="form-group">
-                <label for="entry-title">Título:</label>
-                <input type="text" id="entry-title" name="entry-title" required>
-            </div>
-
-            <div class="form-group">
-                <label for="entry-date">Fecha:</label>
-                <input type="date" id="entry-date" name="entry-date" required>
-            </div>
-
-            <div class="form-group">
-                <label for="entry-subject">Asunto:</label>
-                <input type="text" id="entry-subject" name="entry-subject" required>
-            </div>
-
-            <div class="form-group">
-                <label for="entry-problem">Descripción del Problema:</label>
-                <textarea id="entry-problem" name="entry-problem" rows="4" required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="entry-solution">Solución:</label>
-                <textarea id="entry-solution" name="entry-solution" rows="4" required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="entry-authors">Autores (separados por coma):</label>
-                <input type="text" id="entry-authors" name="entry-authors" required>
-            </div>
-
-            <!-- New Image Upload Section -->
-        <div class="upload-section">
-            <h3>Subir Imágenes</h3>
-            <div class="image-upload-container">
-                <input 
-                    type="file" 
-                    id="image-upload" 
-                    name="images" 
-                    accept="image/jpeg,image/png,image/gif,image/webp" 
-                    multiple 
-                    class="image-upload-input"
-                >
-                <label for="image-upload" class="image-upload-label">
-                    Seleccionar Imágenes
-                </label>
-            </div>
-            <div id="image-preview-list" class="image-preview-list">
-                <!-- Image previews will be dynamically added here -->
-            </div>
+<div class="wiki-container" id="wiki-container">
+    <!-- Formulario de búsqueda -->
+    <form action="/" method="get">
+        <div class="search-options">
+            <input type="text" name="query" value="{{ query }}" placeholder="Buscar..." />
+            <select name="search_type">
+                <option value="title" {% if search_type == 'title' %}selected{% endif %}>Título</option>
+                <option value="content" {% if search_type == 'content' %}selected{% endif %}>Contenido</option>
+                <option value="authors" {% if search_type == 'authors' %}selected{% endif %}>Autores</option>
+            </select>
+            <button type="submit">Buscar</button>
         </div>
-
-        <!-- New File Upload Section -->
-        <div class="upload-section">
-            <h3>Adjuntar Archivos</h3>
-            <div class="file-upload-container">
-                <input 
-                    type="file" 
-                    id="file-upload" 
-                    name="files" 
-                    accept=".pdf,.doc,.docx,.txt,.xlsx,.csv" 
-                    multiple 
-                    class="file-upload-input"
-                >
-                <label for="file-upload" class="file-upload-label">
-                    Seleccionar Archivos
-                </label>
-            </div>
-            <div id="file-list" class="file-list">
-                <!-- File items will be dynamically added here -->
-            </div>
-</div>
-            <div class="form-actions">
-                <button type="button" class="cancel-button" onclick="hideAddEntryForm()">Cancelar</button>
-                <button type="submit" class="submit-button">Enviar Entrada</button>
-            </div>
-        </form>
-    </div>
-
-
+    </form>
 
     <div class="entries">
         {% if query %}
-            <!-- Si hay una consulta de búsqueda, mostramos los resultados de búsqueda -->
             <h2>Resultados para: "{{ query }}"</h2>
             {% if entries %}
-                
                 <div class="entry-list">
-                <p><strong>{{ entries|length }}</strong> resultado(s) encontrado(s).</p>
+                    <p><strong>{{ entries|length }}</strong> resultado(s) encontrado(s).</p>
                     {% for entry in entries %}
                         <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
                             <div class="entry-summary">
                                 <h3>{{ entry.title }}</h3>
                                 <p>{{ entry.content[:300] }}...</p>
-                                <small>Autores: {{ ', '.join(entry.authors) }}</small>
-                                <button class="view-more" onclick="toggleEntry('entry-{{ loop.index }}')">Ver más</button>
+                                <small>Autores: {{ entry.authors | join(", ") }}</small>
+                                <button class="view-more" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Ver más</button>
+                            </div>
+                            <!-- Detalles de la entrada (ocultos inicialmente) -->
+                            <div class="entry-details hidden">
+                                <p>{{ entry.content }}</p> <!-- Detalles del contenido -->
+                                
+                                <!-- Imágenes -->
+                                <div class="modal-section-images">
+                                    <h3>Imágenes</h3>
+                                    <div class="images">
+                                        {% for image in entry.fotos %}
+                                            <img src="data:image/jpeg;base64,{{ image }}" alt="Imagen de la entrada" />
+                                        {% else %}
+                                            <p>No hay imágenes disponibles.</p>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <!-- Archivos -->
+                                <div class="modal-section-attachments">
+                                    <h3>Archivos</h3>
+                                    <div class="files-container">
+                                        {% for file in entry.documentos %}
+                                            <div class="file-card">
+                                                <!-- El atributo data-pdf contiene el base64 del archivo -->
+                                                <button class="view-pdf" data-pdf="{{ file.base64 }}">
+                                                    <div class="file-preview">
+                                                        <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF" class="file-icon">
+                                                    </div>
+                                                    <div class="file-name">Archivo {{ loop.index }}</div>
+                                                </button>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
@@ -129,31 +70,72 @@
                 <p>No se encontraron resultados para la búsqueda.</p>
             {% endif %}
         {% else %}
-            <!-- Si no hay búsqueda, mostramos todas las entradas -->
             <h2>Todas las Entradas</h2>
-            <p><strong>{{ entries|length }}</strong> resultado(s) encontrado(s).</p>
             <div class="entry-list">
                 {% for entry in entries %}
                     <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
                         <div class="entry-summary">
                             <h3>{{ entry.title }}</h3>
                             <p>{{ entry.content[:200] }}...</p>
-                            <small>Autores: {{ ', '.join(entry.authors) }}</small>
-                            <button class="view-more" onclick="toggleEntry('entry-{{ loop.index }}')">Ver más</button>
+                            <small>Autores: {{ entry.authors | join(", ") }}</small>
+                            <button class="view-more" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Ver más</button>
+                        </div>
+                        <!-- Detalles de la entrada (ocultos inicialmente) -->
+                        <div class="entry-details hidden">
+                            <p>{{ entry.content }}</p> <!-- Detalles del contenido -->
+                            
+                            <!-- Imágenes -->
+                            <div class="modal-section-images">
+                                <h3>Imágenes</h3>
+                                <div class="images">
+                                    {% for image in entry.fotos %}
+                                        <img src="data:image/jpeg;base64,{{ image }}" alt="Imagen de la entrada" />
+                                    {% else %}
+                                        <p>No hay imágenes disponibles.</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div class="modal-section-attachments">
+                                <h3>Archivos</h3>
+                                <div class="files-container">
+                                    {% for file in entry.documentos %}
+                                        <div class="file-card">
+                                            <div class="file-preview">
+                                                <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF" class="file-icon">
+                                            </div>
+                                            <div class="file-name">
+                                                <button class="view-pdf" data-pdf="data:application/pdf;base64,{{ file.base64 }}">
+                                                    Ver Documento {{ loop.index }}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
                         </div>
                     </div>
                 {% endfor %}
             </div>
         {% endif %}
-        
     </div>
-
-    <!-- Detalles de la entrada (inicialmente ocultos) -->
-    <div id="entry-details-container" class="entry-details-container hidden">
-        <button class="back-button" onclick="goBack()">&#8592; Regresar</button>
-        <div id="entry-details-content"></div>
-    </div>
-    
 </div>
+
+<!-- Contenedor para mostrar detalles de la entrada -->
+<div id="entry-details-container" class="hidden">
+    <div id="entry-details-content">
+        <!-- El contenido detallado de la entrada será insertado aquí -->
+    </div>
+    <button onclick="goBack()">Volver</button>
+</div>
+
+<div id="pdfViewerContainer" class="hidden">
+    <iframe id="pdfViewer" width="100%" height="500px"></iframe>
+    <button id="closePdfViewer" class="back-button">Cerrar PDF</button>
+</div>
+
+
+
 
 {% endblock %}

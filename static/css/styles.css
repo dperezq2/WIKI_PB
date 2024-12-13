@@ -123,6 +123,73 @@ body {
     max-height: none;
 }
 
+.modal-section-attachments {
+    margin-top: 20px;
+}
+
+.files-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.file-card {
+    width: 120px;
+    height: 150px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.file-card:hover {
+    transform: scale(1.05);
+}
+
+.file-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.file-preview {
+    padding: 10px;
+    background-color: #f7f7f7;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.file-icon {
+    width: 40px;
+    height: 40px;
+}
+
+.file-name {
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.pdf-viewer-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);  /* Fondo oscuro semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: visible; /* Asegura que esté visible */
+}
+
+
+
 .entry-details h3 {
     margin-bottom: 10px;
 }
@@ -212,7 +279,6 @@ body {
     object-fit: cover; /* Asegura que las imágenes mantengan la proporción */
 }
 
-
 /* Estilos para el banner animado */
 .animated-banner {
     overflow: hidden;
@@ -223,11 +289,6 @@ body {
     text-align: center;
     white-space: nowrap;
 }
-
-
-
-
-/* Estilos existentes ... */
 
 /* Estilos para botón de Agregar Entrada */
 .add-entry-section {
@@ -329,7 +390,6 @@ body {
 .submit-button:hover {
     background-color: #0056b3;
 }
-
 
 /* Styles for file and image upload sections */
 .upload-section {
