@@ -27,7 +27,7 @@
                                 <h3>{{ entry.title }}</h3>
                                 <p>{{ entry.content[:300] }}...</p>
                                 <small>Autores: {{ entry.authors | join(", ") }}</small>
-                                <button class="view-more" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Ver más</button>
+                                <button class="view-more" data-entry-id="entry-{{ loop.index }}" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Ver más</button>
                             </div>
                             <!-- Detalles de la entrada (ocultos inicialmente) -->
                             <div class="entry-details hidden">
@@ -47,21 +47,23 @@
 
                                 <!-- Archivos -->
                                 <div class="modal-section-attachments">
-                                    <h3>Archivos</h3>
-                                    <div class="files-container">
-                                        {% for file in entry.documentos %}
-                                            <div class="file-card">
-                                                <!-- El atributo data-pdf contiene el base64 del archivo -->
-                                                <button class="view-pdf" data-pdf="{{ file.base64 }}">
-                                                    <div class="file-preview">
-                                                        <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF" class="file-icon">
-                                                    </div>
-                                                    <div class="file-name">Archivo {{ loop.index }}</div>
-                                                </button>
+                                <h3>Archivos</h3>
+                                <div class="files-container">
+                                    {% for file in entry.documentos %}
+                                        <div class="file-card">
+                                            <div class="file-preview">
+                                                <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF" class="file-icon">
                                             </div>
-                                        {% endfor %}
-                                    </div>
+                                            <div class="file-name">
+                                                <button class="view-pdf" data-pdf="{{ file.base64 }}">
+                                                    Ver Documento {{ loop.index }}
+                                                </button>
+
+                                            </div>
+                                        </div>
+                                    {% endfor %}
                                 </div>
+                            </div>
                             </div>
                         </div>
                     {% endfor %}
@@ -105,9 +107,10 @@
                                                 <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF" class="file-icon">
                                             </div>
                                             <div class="file-name">
-                                                <button class="view-pdf" data-pdf="data:application/pdf;base64,{{ file.base64 }}">
+                                                <button class="view-pdf" data-pdf="{{ file.base64 }}">
                                                     Ver Documento {{ loop.index }}
                                                 </button>
+
                                             </div>
                                         </div>
                                     {% endfor %}

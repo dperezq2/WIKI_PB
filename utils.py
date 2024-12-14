@@ -1,6 +1,7 @@
 import psycopg2
 import base64
 from models import WikiEntry
+import binascii
 
 def load_wiki_entries():
     try:
@@ -26,13 +27,15 @@ def load_wiki_entries():
                 ON core."_URI" = documentos."_TOP_LEVEL_AURI"
             LEFT JOIN "aggregate"."INFO_HISTORICA_PB_FOTO_INFORMACION_BLB" AS foto
                 ON foto."_TOP_LEVEL_AURI" = core."_URI"
-            GROUP BY core."DESCRIP_TITULO", core."DESCRIP_CONTENIDO", core."UBI_NOMBRE_DIGITADOR"
+            GROUP BY core."DESCRIP_TITULO", core."DESCRIP_CONTENIDO", core."UBI_NOMBRE_DIGITADOR", core."_CREATION_DATE"
+            ORDER BY core."_CREATION_DATE" DESC
         """)
 
         resultado = cursor.fetchall()
 
         # Crear instancias de WikiEntry a partir de los datos obtenidos
         entries = []
+        
         for row in resultado:
             # Decodificar los documentos y fotos a Base64
             documentos_base64 = [
