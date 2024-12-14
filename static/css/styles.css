@@ -67,7 +67,7 @@ body {
 
 /* Estilo para el título */
 .header-title {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: bold;
     color: white;
     margin: 0;
@@ -76,11 +76,11 @@ body {
 /* Estilos para las entradas de la wiki */
 .entries .entry {
     border-bottom: 1px solid #ddd;
-    padding: 15px 0;
-    max-height: 150px; /* Limitar la altura */
+    padding: 10px 0;
+    /*max-height: 150px; /* Limitar la altura */
     overflow: hidden; /* Ocultar contenido adicional */
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     transition: max-height 0.5s ease-out;
 }
 
@@ -135,7 +135,7 @@ body {
 
 .file-card {
     width: 120px;
-    height: 150px;
+    height: 170px;
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
@@ -274,16 +274,17 @@ body {
     height: auto;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    width: 100px; /* Ajusta el tamaño de las imágenes según necesites */
+    /*width: 100px; /* Ajusta el tamaño de las imágenes según necesites */
     height: 100px; /* Ajusta el tamaño de las imágenes según necesites */
     object-fit: cover; /* Asegura que las imágenes mantengan la proporción */
 }
+
 
 /* Estilos para el banner animado */
 .animated-banner {
     overflow: hidden;
     position: relative;
-    height: 50px; /* Ajusta según el tamaño de tu texto */
+    height: 35px; /* Ajusta según el tamaño de tu texto */
     color: white;
     font-size: 0.8955rem;
     text-align: center;
@@ -503,11 +504,58 @@ body {
     border-radius: 5px;
 }
 
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #f4f4f4; /* Fondo del footer */
+}
+
+#footer-text {
+    color: #3aae2a; /* Color verde */
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    margin: 0;
+}
+
+/* Estilo para la imagen cuando está en tamaño original */
+img {
+    transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+    cursor: pointer; /* Cambio de cursor para indicar que la imagen es clickeable */
+}
+
+/* Estilo para la imagen cuando está ampliada */
+img.enlarged {
+    position: fixed; /* Para que ocupe toda la pantalla */
+    top: 50%;  /* Centrar verticalmente */
+    left: 50%; /* Centrar horizontalmente */
+    transform: translate(-50%, -50%) scale(2); /* Centrar y ampliar la imagen */
+    max-width: 90%; /* Máximo de 90% del ancho de la pantalla */
+    max-height: 90%; /* Máximo de 90% del alto de la pantalla */
+    z-index: 1000; /* Asegurarse de que esté por encima de otros elementos */
+    display: block; /* Para eliminar cualquier espacio en blanco */
+}
+
+/* Fondo oscuro cuando la imagen está ampliada */
+img.enlarged::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: -1;
+}
+
+
+
+
 /* Media Queries for Fine-Tuning */
 @media screen and (min-width: 768px) {
     /* Tablet and Desktop Styles */
     .header-title {
-        font-size: 2.2rem;
+        font-size: 2rem;
     }
 
     .search-options button {
@@ -523,6 +571,15 @@ body {
         width: auto;
         margin: 0 5px;
     }
+
+    footer {
+        padding: 15px 0; /* Mayor padding para pantallas grandes */
+    }
+
+    #footer-text {
+        font-size: 18px; /* Aumentar el tamaño del texto */
+    }
+
 }
 
 /* Responsive Header */
@@ -545,7 +602,7 @@ body {
     }
 
     .header-title {
-        font-size: 1.8rem;
+        font-size: 1.7rem;
         text-align: center;
     }
 
@@ -589,5 +646,23 @@ body {
     .file-item,
     .image-preview-item {
         flex-basis: 100%;
+    }
+
+    .modal-content {
+        width: 90%; /* Ajusta el modal al 90% del ancho de la pantalla en dispositivos móviles */
+        max-width: 90%;
+    }
+
+    #modal-image {
+        width: 100%; /* La imagen se ajusta al 100% del ancho del modal */
+        height: auto; /* Mantener la proporción de la imagen */
+    }
+
+    footer {
+        padding: 10px 0; /* Menor padding para pantallas pequeñas */
+    }
+
+    #footer-text {
+        font-size: 14px; /* Reducir el tamaño del texto en móviles */
     }
 }

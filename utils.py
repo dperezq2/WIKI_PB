@@ -1,7 +1,7 @@
 import psycopg2
 import base64
 from models import WikiEntry
-import binascii
+from datetime import datetime
 
 def load_wiki_entries():
     try:
@@ -15,11 +15,12 @@ def load_wiki_entries():
         cursor = conn.cursor()
 
         # Consulta SQL para obtener las entradas junto con los documentos y fotos
-        cursor.execute("""
+        cursor.execute(""" 
             SELECT 
                 core."DESCRIP_TITULO", 
                 core."DESCRIP_CONTENIDO", 
                 core."UBI_NOMBRE_DIGITADOR",
+                core."_CREATION_DATE",
                 array_agg(DISTINCT documentos."VALUE") AS "DOCUMENTO_BYTES",
                 array_agg(DISTINCT foto."VALUE") AS "FOTO_BYTES"
             FROM "aggregate"."INFO_HISTORICA_PB_CORE" AS core
@@ -40,11 +41,11 @@ def load_wiki_entries():
             # Decodificar los documentos y fotos a Base64
             documentos_base64 = [
                 base64.b64encode(doc).decode('utf-8') if doc else None
-                for doc in row[3] if doc is not None
+                for doc in row[4] if doc is not None
             ]
             fotos_base64 = [
                 base64.b64encode(foto).decode('utf-8') if foto else None
-                for foto in row[4] if foto is not None
+                for foto in row[5] if foto is not None
             ]
             
             # Generar nombres de archivo
@@ -55,11 +56,15 @@ def load_wiki_entries():
                 title=row[0], 
                 content=row[1], 
                 authors=row[2].split(', '),
+                creation_date=row[3].strftime("%d-%m-%Y") if row[3] else None,
                 documentos=[{'file_id': file_names[i], 'base64': documentos_base64[i]} 
                             for i in range(len(documentos_base64))],
                 fotos=fotos_base64,
                 file_names=file_names
             )
+
+            # Añadir el contador de archivos
+            entry.attachments_count = len(documentos_base64) + len(fotos_base64)
 
             entries.append(entry)
 
@@ -75,6 +80,7 @@ def load_wiki_entries():
             cursor.close()
         if 'conn' in locals():
             conn.close()
+
 
 
 

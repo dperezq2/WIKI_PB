@@ -1,13 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log("✅ Script de wiki cargado completamente");
 
-    // Depuración inicial: Verificar botones PDF
-    const pdfButtons = document.querySelectorAll('.view-pdf');
-    console.log("🔍 Número de botones PDF encontrados:", pdfButtons.length);
-
-    if (pdfButtons.length === 0) {
-        console.warn("⚠️ No se encontraron botones con la clase 'view-pdf'. Verifica si el HTML se carga dinámicamente.");
-    }
+    // Actualizar el año en el footer
+    const currentYear = new Date().getFullYear();
+    document.getElementById('current-year').textContent = currentYear;
 
     // Delegación de eventos para manejar botones dinámicos
     document.addEventListener('click', function (event) {
@@ -56,36 +52,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error("❌ Error al procesar el PDF:", error.message);
             }
         }
+
         // Detectar el clic en el botón "Ver más"
         else if (event.target.classList.contains('view-more')) {
             const entryId = event.target.getAttribute('data-entry-id');
             console.log(`🔍 Intentando mostrar detalles para la entrada: ${entryId}`);
-
-            // Llamar a la función para mostrar detalles de la entrada
             toggleEntryDetails(entryId);
+        }
+
+        // Detectar el clic en una imagen para ampliarla o reducirla
+        else if (event.target.tagName.toLowerCase() === 'img') {
+            const image = event.target;
+            // Alternar la clase 'enlarged' para ampliar o reducir la imagen
+            image.classList.toggle('enlarged');
         }
     });
 
     // Función para mostrar detalles de una entrada
     window.toggleEntryDetails = function (entryId) {
-        console.log(`🔍 Intentando mostrar detalles para la entrada: ${entryId}`);
         const entry = document.getElementById(entryId);
-
-        if (!entry) {
-            console.error("❌ No se encontró el elemento con ID:", entryId);
-            return;
-        }
-
         const entryDetails = entry.querySelector('.entry-details');
-        if (!entryDetails) {
-            console.error("❌ No se encontraron detalles en la entrada:", entryId);
-            return;
-        }
-
-        console.log("✅ Detalles encontrados. Mostrando en el contenedor principal.");
         const entryDetailsContainer = document.getElementById('entry-details-container');
         const entryDetailsContent = document.getElementById('entry-details-content');
-
+        
         entryDetailsContent.innerHTML = entryDetails.innerHTML;
         document.getElementById('wiki-container').style.display = 'none';
         entryDetailsContainer.classList.remove('hidden');
@@ -93,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Función para regresar al listado principal
     window.goBack = function () {
-        console.log("🔙 Regresando al listado principal.");
         document.getElementById('wiki-container').style.display = 'block';
         document.getElementById('entry-details-container').classList.add('hidden');
     };
