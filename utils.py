@@ -1,16 +1,30 @@
+import os
 import psycopg2
 import base64
+from dotenv import load_dotenv
 from models import WikiEntry
 from datetime import datetime
+
+
+# Cargar las variables del archivo .env
+load_dotenv()
+
+# Obtener las credenciales desde las variables de entorno
+DB_NAME = os.getenv('DB_NAME')
+DB_USER = os.getenv('DB_USER')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
+DB_HOST = os.getenv('DB_HOST')
 
 def load_wiki_entries():
     try:
         conn = psycopg2.connect(
-            dbname="aggregate",
-            user="postgres",
-            password="odk1234",
-            host="192.168.1.131"
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+            host=DB_HOST
         )
+        
+        print("✅ Conexión a la base de datos establecida exitosamente.")
 
         cursor = conn.cursor()
 
@@ -71,6 +85,7 @@ def load_wiki_entries():
         return entries
 
     except Exception as e:
+        print("❌ Error al conectar a la base de datos:", e)
         print(f"Error al cargar las entradas: {e}")
         return []
 
@@ -80,8 +95,6 @@ def load_wiki_entries():
             cursor.close()
         if 'conn' in locals():
             conn.close()
-
-
 
 
 def search_entries(entries, search_type, query):

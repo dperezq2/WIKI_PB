@@ -519,13 +519,13 @@ footer {
 }
 
 /* Estilo para la imagen cuando está en tamaño original */
-img {
+.img-adjunta {
     transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
     cursor: pointer; /* Cambio de cursor para indicar que la imagen es clickeable */
 }
 
 /* Estilo para la imagen cuando está ampliada */
-img.enlarged {
+.img-adjunta.enlarged {
     position: fixed; /* Para que ocupe toda la pantalla */
     top: 50%;  /* Centrar verticalmente */
     left: 50%; /* Centrar horizontalmente */
@@ -537,7 +537,7 @@ img.enlarged {
 }
 
 /* Fondo oscuro cuando la imagen está ampliada */
-img.enlarged::before {
+.img-adjunta.enlarged::before {
     content: '';
     position: fixed;
     top: 0;
@@ -549,6 +549,28 @@ img.enlarged::before {
 }
 
 
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease;
+}
+
+.scroll-to-top:hover {
+    background-color: #0056b3;
+}
 
 
 /* Media Queries for Fine-Tuning */

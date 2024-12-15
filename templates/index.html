@@ -39,10 +39,8 @@
                                 <div class="modal-section-images">
                                     <h3>Imágenes</h3>
                                     <div class="images">
-                                        {% for image in entry.fotos %}
-                                            <a href="javascript:void(0)" onclick="openImageModal('data:image/jpeg;base64,{{ image }}')">
-                                                <img src="data:image/jpeg;base64,{{ image }}" alt="Imagen de la entrada" />
-                                            </a>
+                                        {% for image in entry.fotos %}                                            
+                                            <img class="img-adjunta" src="data:image/jpeg;base64,{{ image }}" alt="Imagen de la entrada" />
                                         {% else %}
                                             <p>No hay imágenes disponibles.</p>
                                         {% endfor %}
@@ -93,13 +91,11 @@
                             <p>{{ entry.content }}</p> <!-- Detalles del contenido -->
                             
                             <!-- Imágenes -->
+                            <h3>Imágenes</h3>
                             <div class="modal-section-images">
-                                <h3>Imágenes</h3>
                                 <div class="images">
                                     {% for image in entry.fotos %}
-                                        <a href="javascript:void(0)" onclick="openImageModal('data:image/jpeg;base64,{{ image }}')">
-                                            <img src="data:image/jpeg;base64,{{ image }}" alt="Imagen de la entrada" />
-                                        </a>
+                                        <img class="img-adjunta" src="data:image/jpeg;base64,{{ image }}" alt="Imagen de la entrada" />
                                     {% else %}
                                         <p>No hay imágenes disponibles.</p>
                                     {% endfor %}
@@ -107,8 +103,9 @@
                             </div>
 
                             <!-- Archivos -->
+                            <h3>Archivos</h3>
                             <div class="modal-section-attachments">
-                                <h3>Archivos</h3>
+                                
                                 <div class="files-container">
                                     {% for file in entry.documentos %}
                                         <div class="file-card">

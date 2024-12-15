@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Detectar el clic en una imagen para ampliarla o reducirla
-        else if (event.target.tagName.toLowerCase() === 'img') {
+        if (event.target.tagName.toLowerCase() === 'img' && event.target.classList.contains('img-adjunta')) {
             const image = event.target;
             // Alternar la clase 'enlarged' para ampliar o reducir la imagen
             image.classList.toggle('enlarged');
@@ -76,13 +76,31 @@ document.addEventListener('DOMContentLoaded', function () {
         const entryDetailsContent = document.getElementById('entry-details-content');
         
         entryDetailsContent.innerHTML = entryDetails.innerHTML;
-        document.getElementById('wiki-container').style.display = 'none';
+        document.querySelector('.entries').style.display = 'none'; // Ocultar solo la lista de entradas
         entryDetailsContainer.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // Volver al inicio
     };
 
     // Función para regresar al listado principal
     window.goBack = function () {
-        document.getElementById('wiki-container').style.display = 'block';
+        document.querySelector('.entries').style.display = 'block'; // Mostrar la lista
         document.getElementById('entry-details-container').classList.add('hidden');
     };
+
+    const scrollToTopButton = document.getElementById('scroll-to-top');
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 200) {
+            scrollToTopButton.style.display = 'flex';
+        } else {
+            scrollToTopButton.style.display = 'none';
+        }
+    });
+
+    scrollToTopButton.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
 });
