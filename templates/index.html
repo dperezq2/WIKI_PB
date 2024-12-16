@@ -3,19 +3,49 @@
 {% block content %}
 <div class="wiki-container" id="wiki-container">
     <!-- Formulario de búsqueda -->
-    <form action="/" method="get">
-        <div class="search-options">
-            <input type="text" name="query" value="{{ query }}" placeholder="Buscar..." />
-            <select name="search_type">
-                <option value="title" {% if search_type == 'title' %}selected{% endif %}>Título</option>
-                <option value="content" {% if search_type == 'content' %}selected{% endif %}>Contenido</option>
-                <option value="authors" {% if search_type == 'authors' %}selected{% endif %}>Autores</option>
-                <option value="finca" {% if search_type == 'finca' %}selected{% endif %}>Finca</option>
-                <option value="plaga" {% if search_type == 'plaga' %}selected{% endif %}>Plaga</option>
-            </select>
-            <button type="submit">Buscar</button>
-        </div>
-    </form>
+    <form method="GET" action="/">
+    <!-- Primera búsqueda -->
+    <div class="search-options">
+        <input type="text" name="query1" value="{{ query1 }}" placeholder="Buscar..." />
+        <select name="search_type1">
+            <option value="title" {% if search_type1 == 'title' %}selected{% endif %}>Título</option>
+            <option value="content" {% if search_type1 == 'content' %}selected{% endif %}>Contenido</option>
+            <option value="authors" {% if search_type1 == 'authors' %}selected{% endif %}>Autores</option>
+            <option value="finca" {% if search_type1 == 'finca' %}selected{% endif %}>Finca</option>
+            <option value="plaga" {% if search_type1 == 'plaga' %}selected{% endif %}>Plaga</option>
+        </select>
+    </div>
+
+    <!-- Segunda búsqueda -->
+    <div class="search-options">
+        <input type="text" name="query2" value="{{ query2 }}" placeholder="Buscar..." />
+        <select name="search_type2">
+            <option value="title" {% if search_type2 == 'title' %}selected{% endif %}>Título</option>
+            <option value="content" {% if search_type2 == 'content' %}selected{% endif %}>Contenido</option>
+            <option value="authors" {% if search_type2 == 'authors' %}selected{% endif %}>Autores</option>
+            <option value="finca" {% if search_type2 == 'finca' %}selected{% endif %}>Finca</option>
+            <option value="plaga" {% if search_type2 == 'plaga' %}selected{% endif %}>Plaga</option>
+        </select>
+    </div>
+
+    <!-- Tercera búsqueda -->
+    <div class="search-options">
+        <input type="text" name="query3" value="{{ query3 }}" placeholder="Buscar..." />
+        <select name="search_type3">
+            <option value="title" {% if search_type3 == 'title' %}selected{% endif %}>Título</option>
+            <option value="content" {% if search_type3 == 'content' %}selected{% endif %}>Contenido</option>
+            <option value="authors" {% if search_type3 == 'authors' %}selected{% endif %}>Autores</option>
+            <option value="finca" {% if search_type3 == 'finca' %}selected{% endif %}>Finca</option>
+            <option value="plaga" {% if search_type3 == 'plaga' %}selected{% endif %}>Plaga</option>
+        </select>
+    </div>
+    <div class="search-options">
+        <button type="submit">Buscar</button>
+    </div>
+    
+    
+</form>
+
 
     <div class="entries">
         {% if query %}
