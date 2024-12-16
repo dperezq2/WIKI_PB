@@ -76,14 +76,31 @@ document.addEventListener('DOMContentLoaded', function () {
         const entryDetailsContent = document.getElementById('entry-details-content');
         
         entryDetailsContent.innerHTML = entryDetails.innerHTML;
-        document.querySelector('.entries').style.display = 'none'; // Ocultar solo la lista de entradas
+        
+        
+        document.getElementById('wiki-container').style.display = 'none'; // Ocultar solo la lista de entradas
+        /*     
+        // Ocultar todos los elementos de búsqueda (inputs y selects)
+        const searchOptions = document.querySelectorAll('.search-options');
+        searchOptions.forEach(function(option) {
+            option.style.display = 'none'; // Ocultar cada uno de los elementos de búsqueda
+        });
+        */   
         entryDetailsContainer.classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' }); // Volver al inicio
     };
 
     // Función para regresar al listado principal
     window.goBack = function () {
-        document.querySelector('.entries').style.display = 'block'; // Mostrar la lista
+        
+        document.getElementById('wiki-container').style.display = 'block'; // Mostrar la lista
+        /*
+        // Mostrar todos los elementos de búsqueda nuevamente
+        const searchOptions = document.querySelectorAll('.search-options');
+            searchOptions.forEach(function(option) {
+            option.style.display = 'flex'; // Mostrar cada uno de los elementos de búsqueda
+        });
+        */
         document.getElementById('entry-details-container').classList.add('hidden');
     };
 
@@ -102,5 +119,23 @@ document.addEventListener('DOMContentLoaded', function () {
             top: 0,
             behavior: 'smooth'
         });
+    });
+
+    // Manejar el clic en el botón "Limpiar"
+    document.getElementById('clear-button').addEventListener('click', function () {
+        console.log("🔄 Limpiando el formulario y los resultados.");
+
+        // Limpiar los campos de texto y reiniciar los selectores
+        document.querySelector('input[name="query1"]').value = "";
+        document.querySelector('select[name="search_type1"]').value = "title";
+
+        document.querySelector('input[name="query2"]').value = "";
+        document.querySelector('select[name="search_type2"]').value = "";
+
+        document.querySelector('input[name="query3"]').value = "";
+        document.querySelector('select[name="search_type3"]').value = "";
+
+        // Opcional: recargar la página sin parámetros para eliminar los resultados filtrados
+        window.location.href = "/";
     });
 });

@@ -18,7 +18,7 @@ def apply_csp(response):
 
 
 
-@app.route("/", methods=["GET", "POST"])  # Aquí agregamos el decorador @
+@app.route("/", methods=["GET", "POST"])  
 def index():
     # Obtener los valores de los tres inputs y sus selectores
     query1 = request.args.get("query1", "").strip()
@@ -30,23 +30,28 @@ def index():
     query3 = request.args.get("query3", "").strip()
     search_type3 = request.args.get("search_type3", "")
     
-    # Cargar todas las entradas al principio
-    entries = load_wiki_entries()
-
-    # Crear una lista de criterios
+    # Crear una lista de criterios para buscar
     criteria = [
         {"query": query1, "type": search_type1},
         {"query": query2, "type": search_type2},
         {"query": query3, "type": search_type3},
     ]
+    
+    # Si hay al menos un filtro activo, cargar las entradas filtradas
+    if query1 or query2 or query3:  # Comprobar si alguno de los filtros está activo
+        entries = load_wiki_entries()  # Cargar todas las entradas solo cuando hay búsqueda
+        filtered_entries = search_entries(entries, criteria)  # Filtrar las entradas
+        num_results = len(filtered_entries)  # Número de resultados encontrados
+    else:
+        # Si no hay filtros activos, no cargar ninguna entrada
+        filtered_entries = []
+        num_results = 0
 
-    # Filtrar las entradas si hay alguna consulta válida
-    entries = search_entries(entries, criteria)
-
-    # Enviar todas las consultas y tipos al frontend para que se mantengan
+    # Enviar todos los datos al frontend
     return render_template(
         "index.html",
-        entries=entries,
+        entries=filtered_entries,
+        num_results=num_results,  # Agregar el conteo de resultados
         query1=query1,
         search_type1=search_type1,
         query2=query2,
@@ -54,6 +59,9 @@ def index():
         query3=query3,
         search_type3=search_type3,
     )
+
+
+
 
 
 

@@ -18,4 +18,4 @@ class WikiEntry:
         self.file_names = file_names or []  # Lista de nombres de archivo
 
     def __repr__(self):
-        return f"WikiEntry(title={self.title}, authors={self.authors}, creation_date={self.creation_date}, documentos_count={len(self.documentos)}, fotos_count={len(self.fotos)})"
+        return f"WikiEntry(title={self.title}, content={self.content}, authors={self.authors}, creation_date={self.creation_date}, documentos_count={len(self.documentos)}, fotos_count={len(self.fotos)})"

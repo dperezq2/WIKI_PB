@@ -34,8 +34,8 @@ def load_wiki_entries():
             SELECT 
                 CASE 
                     WHEN core."DESCRIP_FINCA" IS NOT NULL 
-                    THEN core."DESCRIP_FINCA" || ': ' || core."DESCRIP_TITULO"
-                    ELSE core."DESCRIP_TITULO"
+                    THEN COALESCE(core."DESCRIP_FINCA", '') || ': ' || COALESCE(core."DESCRIP_TITULO", '')
+                    ELSE COALESCE(core."DESCRIP_TITULO", '')
                 END AS "DESCRIP_TITULO_COMPLETO",
                 core."DESCRIP_CONTENIDO", 
                 core."UBI_NOMBRE_DIGITADOR",
