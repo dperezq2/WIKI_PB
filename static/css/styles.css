@@ -44,7 +44,7 @@ body {
 .header {
     background-color: #333333; /* Fondo negro */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: sticky;
+    /*position: sticky;*/
     top: 0;
     z-index: 100;
     text-align: center; /* Centrar elementos dentro del header */

@@ -1,6 +1,7 @@
 import os
 import psycopg2
 import base64
+import unicodedata
 from dotenv import load_dotenv
 from models import WikiEntry
 from datetime import datetime
@@ -31,7 +32,11 @@ def load_wiki_entries():
         # Consulta SQL para obtener las entradas junto con los documentos y fotos
         cursor.execute(""" 
             SELECT 
-                core."DESCRIP_TITULO", 
+                CASE 
+                    WHEN core."DESCRIP_FINCA" IS NOT NULL 
+                    THEN core."DESCRIP_FINCA" || ': ' || core."DESCRIP_TITULO"
+                    ELSE core."DESCRIP_TITULO"
+                END AS "DESCRIP_TITULO_COMPLETO",
                 core."DESCRIP_CONTENIDO", 
                 core."UBI_NOMBRE_DIGITADOR",
                 core."_CREATION_DATE",
@@ -42,7 +47,12 @@ def load_wiki_entries():
                 ON core."_URI" = documentos."_TOP_LEVEL_AURI"
             LEFT JOIN "aggregate"."INFO_HISTORICA_PB_FOTO_INFORMACION_BLB" AS foto
                 ON foto."_TOP_LEVEL_AURI" = core."_URI"
-            GROUP BY core."DESCRIP_TITULO", core."DESCRIP_CONTENIDO", core."UBI_NOMBRE_DIGITADOR", core."_CREATION_DATE"
+            GROUP BY 
+                core."DESCRIP_TITULO", 
+                core."DESCRIP_FINCA", 
+                core."DESCRIP_CONTENIDO", 
+                core."UBI_NOMBRE_DIGITADOR", 
+                core."_CREATION_DATE"
             ORDER BY core."_CREATION_DATE" DESC
         """)
 
@@ -97,22 +107,37 @@ def load_wiki_entries():
             conn.close()
 
 
+def normalize(text):
+    """Normalizar texto eliminando acentos y convirtiendo a minúsculas"""
+    text = unicodedata.normalize('NFKD', text)  # Descomponer caracteres Unicode
+    return ''.join(c for c in text if not unicodedata.combining(c)).lower()  # Eliminar acentos y pasar a minúsculas
+
+
 def search_entries(entries, search_type, query):
     """Buscar entradas de wiki según el tipo de búsqueda"""
     # Si no hay query, devolver todas las entradas
     if not query or query.strip() == '':
         return entries
     
-    query = query.lower()
+    # Normalizar query
+    query = normalize(query)
     
     if search_type == 'title':
-        return [entry for entry in entries if query in entry.title.lower()]
+        return [entry for entry in entries if query in normalize(entry.title)]
     
     elif search_type == 'content':
-        return [entry for entry in entries if query in entry.content.lower()]
+        return [entry for entry in entries if query in normalize(entry.content)]
     
     elif search_type == 'authors':
         return [entry for entry in entries if 
-                any(query in author.lower() for author in entry.authors)]
+                any(query in normalize(author) for author in entry.authors)]
+        
+    elif search_type == 'finca':
+        return [entry for entry in entries if 
+                query in normalize(entry.title) or query in normalize(entry.content)]
+    
+    elif search_type == 'plaga':  # Buscar en título y contenido
+        return [entry for entry in entries if 
+                query in normalize(entry.title) or query in normalize(entry.content)]
     
     return entries

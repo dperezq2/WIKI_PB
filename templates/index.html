@@ -10,6 +10,8 @@
                 <option value="title" {% if search_type == 'title' %}selected{% endif %}>Título</option>
                 <option value="content" {% if search_type == 'content' %}selected{% endif %}>Contenido</option>
                 <option value="authors" {% if search_type == 'authors' %}selected{% endif %}>Autores</option>
+                <option value="finca" {% if search_type == 'finca' %}selected{% endif %}>Finca</option>
+                <option value="plaga" {% if search_type == 'plaga' %}selected{% endif %}>Plaga</option>
             </select>
             <button type="submit">Buscar</button>
         </div>
