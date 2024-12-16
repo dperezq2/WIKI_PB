@@ -61,16 +61,18 @@
                         <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
                             <div class="entry-summary">
                                 <h3>{{ entry.title }}</h3>
-                                <p>{{ entry.content[:325] }}...</p>
+                                <p>{{ entry.content[:475] }}...</p>
                                 <!-- Mostrar el contador de archivos -->
                                 <p style="color: blue; text-decoration: underline;">Archivos adjuntos: {{ entry.documentos|length + entry.fotos|length }}</p>
                                 <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
-                                <button class="view-more" data-entry-id="entry-{{ loop.index }}" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Ver más</button>
+                                <button class="view-more" data-entry-id="entry-{{ loop.index }}" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Leer más</button>
                             </div>
                             <!-- Detalles de la entrada (ocultos inicialmente) -->
                             <div class="entry-details hidden">
                                 <h1>{{ entry.title }}</h1>
-                                <p>{{ entry.content }}</p> <!-- Detalles del contenido -->
+                                <div>
+                                    {{ entry.content.replace('\n', '<br>') | safe }}
+                                </div>
                                 
                                 <h3>Imágenes</h3>
                                 <!-- Imágenes -->
@@ -83,7 +85,7 @@
                                         {% endfor %}
                                     </div>
                                 </div>
-                                <h3>Archivos</h3>
+                                <h3>Documentos</h3>
                                 <!-- Archivos -->
                                 <div class="modal-section-attachments">
                                     <div class="files-container">
@@ -118,16 +120,18 @@
                     <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
                         <div class="entry-summary">
                             <h3>{{ entry.title }}</h3>
-                            <p>{{ entry.content[:325] }}...</p>
+                            <p>{{ entry.content[:475] }}...</p>
                             <!-- Mostrar el contador de archivos -->
                             <p style="color: blue; text-decoration: underline;">Archivos adjuntos: {{ entry.documentos|length + entry.fotos|length }}</p>
                             <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
-                            <button class="view-more" data-entry-id="entry-{{ loop.index }}" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Ver más</button>
+                            <button class="view-more" data-entry-id="entry-{{ loop.index }}" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Leer más</button>
                         </div>
                         <!-- Detalles de la entrada (ocultos inicialmente) -->
                         <div class="entry-details hidden">
                             <h1>{{ entry.title }}</h1> <!-- Detalles del contenido -->
-                            <p>{{ entry.content }}</p> <!-- Detalles del contenido -->
+                            <div>
+                                {{ entry.content.replace('\n', '<br>') | safe }}
+                            </div>
                             
                             <!-- Imágenes -->
                             <h3>Imágenes</h3>
@@ -142,7 +146,7 @@
                             </div>
 
                             <!-- Archivos -->
-                            <h3>Archivos</h3>
+                            <h3>Documentos</h3>
                             <div class="modal-section-attachments">
                                 
                                 <div class="files-container">

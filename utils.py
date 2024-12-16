@@ -40,8 +40,8 @@ def load_wiki_entries():
                 core."DESCRIP_CONTENIDO", 
                 core."UBI_NOMBRE_DIGITADOR",
                 core."_CREATION_DATE",
-                array_agg(DISTINCT documentos."VALUE") AS "DOCUMENTO_BYTES",
-                array_agg(DISTINCT foto."VALUE") AS "FOTO_BYTES"
+                array_agg(documentos."VALUE" ORDER BY documentos."_CREATION_DATE" ASC) AS "DOCUMENTO_BYTES",
+                array_agg(foto."VALUE" ORDER BY foto."_CREATION_DATE" ASC) AS "FOTO_BYTES"
             FROM "aggregate"."INFO_HISTORICA_PB_CORE" AS core
             LEFT JOIN "aggregate"."INFO_HISTORICA_PB_DOCUMENTO_BLB" AS documentos
                 ON core."_URI" = documentos."_TOP_LEVEL_AURI"

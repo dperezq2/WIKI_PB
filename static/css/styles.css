@@ -281,11 +281,10 @@ body {
 
 .modal-section-images .images img {
     max-width: 100%;
-    height: auto;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     /*width: 100px; /* Ajusta el tamaño de las imágenes según necesites */
-    height: 100px; /* Ajusta el tamaño de las imágenes según necesites */
+    height: 300px; /* Ajusta el tamaño de las imágenes según necesites */
     object-fit: cover; /* Asegura que las imágenes mantengan la proporción */
 }
 
@@ -694,6 +693,19 @@ footer {
         margin-left: 0;
     }
 
+    .img-adjunta.enlarged {
+        left: 0;
+        transform: none; /* Eliminar la traslación y el escalado */
+        max-width: 100%; /* Asegurarse de que no exceda el ancho del dispositivo */
+        max-height: 100%; /* Asegurarse de que no exceda la altura del dispositivo */
+        margin: 0 auto;
+        right: 0;
+    }
+
+    .img-adjunta.enlarged::before {
+        background: rgba(0, 0, 0, 0.85); /* Fondo más oscuro para dispositivos móviles */
+    }
+    
     footer {
         padding: 10px 0; /* Menor padding para pantallas pequeñas */
     }
