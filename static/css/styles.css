@@ -227,12 +227,12 @@ body {
 
 /* Caja para archivos adjuntos */
 .modal-section-attachments {
-    background-color: #f9f9f9;
+    /*background-color: #f9f9f9;*/
     padding: 20px;
     border-radius: 5px;
     margin-top: 20px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /*border: 1px solid #ddd;*/
+    /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
 }
 
 .modal-section-attachments h3 {
@@ -260,12 +260,12 @@ body {
 
 /* Caja para imágenes */
 .modal-section-images {
-    background-color: #f9f9f9;
+    /*background-color: #f9f9f9;*/
     padding: 20px;
-    border-radius: 5px;
+    /*border-radius: 5px;*/
     margin-top: 20px;
-    border: 1px solid #ddd;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    /*border: 1px solid #ddd;*/
+    /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
 }
 
 .modal-section-images h3 {
