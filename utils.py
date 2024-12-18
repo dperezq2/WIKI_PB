@@ -2,6 +2,9 @@ import os
 import psycopg2
 import base64
 import unicodedata
+import json
+import redis
+import logging
 from dotenv import load_dotenv
 from models import WikiEntry
 from datetime import datetime
@@ -113,6 +116,17 @@ def normalize(text):
     return ''.join(c for c in text if not unicodedata.combining(c)).lower()  # Eliminar acentos y pasar a minúsculas
 
 
+# Configurar el registro
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Get Redis connection details from environment variables
+redis_host = os.getenv('REDIS_HOST', 'localhost')
+redis_port = int(os.getenv('REDIS_PORT', 6379))
+
+# Connect to Redis server
+redis_client = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
+
 def search_entries(entries, criteria):
     """
     Buscar entradas basado en múltiples criterios.
@@ -137,11 +151,28 @@ def search_entries(entries, criteria):
             # Buscar en título y contenido
             return query in normalize(entry.title) or query in normalize(entry.content)
 
+    # Generate a cache key based on the criteria
+    cache_key = f"search_entries:{json.dumps(criteria)}"
+    cached_result = redis_client.get(cache_key)
+
+    if cached_result:
+        # Devolver el resultado en caché si está disponible
+        logger.info("Devolviendo resultado desde la caché")
+        # Return cached result if available
+        return [WikiEntry(**entry) for entry in json.loads(cached_result)]
+
     # Filtrar las entradas usando todos los criterios
     filtered_entries = entries
     for criterion in criteria:
         query = criterion.get("query", "")
         search_type = criterion.get("type", "")
         filtered_entries = [entry for entry in filtered_entries if matches(entry, query, search_type)]
+
+    # Convert filtered entries to dictionaries for caching
+    filtered_entries_dicts = [entry.to_dict() for entry in filtered_entries]
+
+    # Cache the result with an expiration time (e.g., 3600 seconds = 1 hour)
+    redis_client.setex(cache_key, 3600, json.dumps(filtered_entries_dicts))
+    logger.info("Resultado almacenado en la caché")
 
     return filtered_entries
