@@ -49,6 +49,17 @@ body {
     border-radius: 10px;
 }
 
+#add-entry-button {
+    margin-left: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
 /* Estilo para el encabezado */
 .header {
     background-color: #333333; /* Fondo negro */

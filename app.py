@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from models import WikiEntry
 from utils import load_wiki_entries, search_entries
 import base64
@@ -61,7 +61,46 @@ def index():
     )
 
 
+# Define las contraseñas válidas como una lista simple
+VALID_PASSWORDS = ['admin123', 'editor456', 'user789']
 
+@app.route("/validate_password", methods=["POST"])
+def validate_password():
+    password = request.json.get('password')
+    if password in VALID_PASSWORDS:
+        return jsonify({'success': True})
+    return jsonify({'success': False})
+
+@app.route("/add_entry", methods=["POST"])
+def add_entry():
+    try:
+        title = request.form.get("title")
+        content = request.form.get("content")
+        finca = request.form.get("finca")
+        author = request.form.get("author")
+        creation_date = request.form.get("creation_date")
+        images = request.files.getlist("images")
+        documents = request.files.getlist("documents")
+
+        # Convertir imágenes y documentos a base64
+        encoded_images = [base64.b64encode(image.read()).decode("utf-8") for image in images if image.filename]
+        encoded_documents = [base64.b64encode(doc.read()).decode("utf-8") for doc in documents if doc.filename]
+
+        new_entry = WikiEntry(
+            title=title,
+            content=content,
+            finca=finca,
+            authors=[author],
+            creation_date=creation_date,
+            fotos=encoded_images,
+            documentos=encoded_documents,
+        )
+        # Aquí agregarías el código para guardar en tu base de datos
+        
+        return jsonify({'success': True, 'message': 'Entrada agregada exitosamente'})
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 
 
 

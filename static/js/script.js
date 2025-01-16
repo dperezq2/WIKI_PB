@@ -1,6 +1,88 @@
 document.addEventListener('DOMContentLoaded', function () {
     console.log("✅ Script de wiki cargado completamente");
 
+
+    const addEntryButton = document.getElementById('add-entry-button');
+    const passwordModal = document.getElementById('password-modal');
+    const passwordInput = document.getElementById('password-input');
+    const submitPasswordButton = document.getElementById('submit-password');
+    const closeModalButton = document.getElementById('close-password-modal');
+    const passwordError = document.getElementById('password-error');
+    const addEntryFormContainer = document.getElementById('add-entry-form-container');
+    const wikiContainer = document.getElementById('wiki-container');
+    
+    // Mantener formulario oculto inicialmente
+    addEntryFormContainer.classList.add('hidden');
+    
+    // Mostrar modal para contraseña
+    addEntryButton.addEventListener('click', () => {
+        passwordModal.classList.remove('hidden');  // Muestra el modal de contraseña
+    });
+    
+    // Cerrar modal de contraseña
+    closeModalButton.addEventListener('click', () => {
+        passwordModal.classList.add('hidden');  // Oculta el modal
+        passwordInput.value = '';  // Limpia el campo de contraseña
+        passwordError.style.display = 'none';  // Oculta cualquier mensaje de error
+    });
+    
+    // Validar contraseña y mostrar el formulario de agregar entrada
+    submitPasswordButton.addEventListener('click', async () => {
+        const enteredPassword = passwordInput.value.trim();
+        console.log("Contraseña ingresada:", enteredPassword);  // Verifica la contraseña ingresada
+    
+        try {
+            const response = await fetch('/validate_password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: enteredPassword }),
+            });
+    
+            const data = await response.json();
+            console.log("Respuesta del servidor:", data);  // Verifica la respuesta del servidor
+    
+            if (data.success) {
+                // Contraseña correcta
+                passwordModal.classList.add('hidden');  // Oculta el modal
+                addEntryFormContainer.classList.remove('hidden');  // Muestra el formulario
+                wikiContainer.style.display = 'none';  // Oculta el contenedor principal, si lo deseas
+                passwordInput.value = '';  // Limpia el campo de contraseña
+                passwordError.style.display = 'none';  // Oculta cualquier mensaje de error
+            } else {
+                passwordError.style.display = 'block';  // Muestra el error si la contraseña es incorrecta
+                passwordError.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
+            }
+        } catch (error) {
+            console.error('Error al validar la contraseña:', error);
+            passwordError.style.display = 'block';  // Muestra el error en caso de fallo en la petición
+            passwordError.textContent = 'Error en el servidor. Intenta de nuevo más tarde.';
+        }
+    });
+    
+    // Botón de "Cancelar" en el formulario
+    const cancelButton = document.querySelector('.cancel-button'); // Botón de cancelar dentro del formulario
+    
+    cancelButton.addEventListener('click', () => {
+        // Ocultar el formulario de agregar entrada
+        addEntryFormContainer.classList.add('hidden');
+    
+        // Mostrar el contenedor principal de la wiki
+        wikiContainer.style.display = 'block';
+    
+        // Opcional: Limpiar los campos del formulario
+        const formInputs = addEntryFormContainer.querySelectorAll('input, textarea');
+        formInputs.forEach(input => input.value = '');
+    
+        // Opcional: Ocultar cualquier mensaje de error
+        passwordError.style.display = 'none';
+    });
+    
+
+
+
+    
     // Actualizar el año en el footer
     const currentYear = new Date().getFullYear();
     document.getElementById('current-year').textContent = currentYear;
@@ -52,7 +134,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.error("❌ Error al procesar el PDF:", error.message);
             }
         }
-
         // Detectar el clic en el botón "Ver más"
         else if (event.target.classList.contains('view-more')) {
             const entryId = event.target.getAttribute('data-entry-id');
