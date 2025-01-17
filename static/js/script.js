@@ -3,86 +3,175 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     const addEntryButton = document.getElementById('add-entry-button');
-    const passwordModal = document.getElementById('password-modal');
-    const passwordInput = document.getElementById('password-input');
-    const submitPasswordButton = document.getElementById('submit-password');
-    const closeModalButton = document.getElementById('close-password-modal');
-    const passwordError = document.getElementById('password-error');
-    const addEntryFormContainer = document.getElementById('add-entry-form-container');
-    const wikiContainer = document.getElementById('wiki-container');
-    
-    // Mantener formulario oculto inicialmente
-    addEntryFormContainer.classList.add('hidden');
-    
-    // Mostrar modal para contraseña
-    addEntryButton.addEventListener('click', () => {
-        passwordModal.classList.remove('hidden');  // Muestra el modal de contraseña
-    });
-    
-    // Cerrar modal de contraseña
-    closeModalButton.addEventListener('click', () => {
-        passwordModal.classList.add('hidden');  // Oculta el modal
-        passwordInput.value = '';  // Limpia el campo de contraseña
-        passwordError.style.display = 'none';  // Oculta cualquier mensaje de error
-    });
-    
-    // Validar contraseña y mostrar el formulario de agregar entrada
-    submitPasswordButton.addEventListener('click', async () => {
-        const enteredPassword = passwordInput.value.trim();
-        console.log("Contraseña ingresada:", enteredPassword);  // Verifica la contraseña ingresada
-    
-        try {
-            const response = await fetch('/validate_password', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ password: enteredPassword }),
-            });
-    
-            const data = await response.json();
-            console.log("Respuesta del servidor:", data);  // Verifica la respuesta del servidor
-    
-            if (data.success) {
-                // Contraseña correcta
-                passwordModal.classList.add('hidden');  // Oculta el modal
-                addEntryFormContainer.classList.remove('hidden');  // Muestra el formulario
-                wikiContainer.style.display = 'none';  // Oculta el contenedor principal, si lo deseas
-                passwordInput.value = '';  // Limpia el campo de contraseña
-                passwordError.style.display = 'none';  // Oculta cualquier mensaje de error
-            } else {
-                passwordError.style.display = 'block';  // Muestra el error si la contraseña es incorrecta
-                passwordError.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
-            }
-        } catch (error) {
-            console.error('Error al validar la contraseña:', error);
-            passwordError.style.display = 'block';  // Muestra el error en caso de fallo en la petición
-            passwordError.textContent = 'Error en el servidor. Intenta de nuevo más tarde.';
+const cueModal = document.getElementById('cue-modal');
+const cueInput = document.getElementById('cue-input');
+const submitCueButton = document.getElementById('submit-cue');
+const closeModalButton = document.getElementById('close-cue-modal');
+const cueError = document.getElementById('cue-error');
+const addEntryFormContainer = document.getElementById('add-entry-form-container');
+const wikiContainer = document.getElementById('wiki-container');
+const authorInput = document.getElementById('entry-authors');  // Mantener esta referencia
+const addEntryForm = document.getElementById('add-entry-form');
+
+// Mantener formulario oculto inicialmente
+addEntryFormContainer.classList.add('hidden');
+
+// Mostrar el modal cuando se haga clic en el botón "Agregar Entrada"
+addEntryButton.addEventListener('click', () => {
+    cueModal.classList.remove('hidden');
+    cueModal.classList.add('show');  // Asegúrate de que el modal se muestre
+});
+
+// Cerrar el modal cuando se haga clic en "Cancelar"
+closeModalButton.addEventListener('click', () => {
+    cueModal.classList.remove('show');
+    cueModal.classList.add('hidden');
+    cueInput.value = '';  // Limpiar el campo de entrada
+    cueError.style.display = 'none';  // Ocultar mensaje de error
+});
+
+// Validar CUE y mostrar el formulario de agregar entrada
+submitCueButton.addEventListener('click', async () => {
+    const enteredCue = cueInput.value.trim();
+    console.log("CUE ingresado:", enteredCue);
+
+    try {
+        const response = await fetch('/validate_cue', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ cue: enteredCue }),
+        });
+
+        const data = await response.json();
+        console.log("Respuesta del servidor:", data);
+
+        if (data.success) {
+            cueModal.classList.add('hidden');
+            addEntryFormContainer.classList.remove('hidden');
+            wikiContainer.style.display = 'none';
+            cueInput.value = '';
+            cueError.style.display = 'none';
+
+            // Establecer el nombre del usuario activo en el campo de autor
+            authorInput.value = data.nombre;
+        } else {
+            cueError.style.display = 'block';
+            cueError.textContent = data.error || 'CUE inválido o usuario inactivo. Inténtalo de nuevo.';
         }
-    });
+    } catch (error) {
+        console.error('Error al validar el CUE:', error);
+        cueError.style.display = 'block';
+        cueError.textContent = 'Error en el servidor. Intenta de nuevo más tarde.';
+    }
+});
+
+// Enviar el formulario de agregar entrada
+addEntryForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    // Crear FormData manualmente
+    const formData = new FormData();
     
-    // Botón de "Cancelar" en el formulario
-    const cancelButton = document.querySelector('.cancel-button'); // Botón de cancelar dentro del formulario
-    
-    cancelButton.addEventListener('click', () => {
-        // Ocultar el formulario de agregar entrada
-        addEntryFormContainer.classList.add('hidden');
-    
-        // Mostrar el contenedor principal de la wiki
-        wikiContainer.style.display = 'block';
-    
-        // Opcional: Limpiar los campos del formulario
-        const formInputs = addEntryFormContainer.querySelectorAll('input, textarea');
-        formInputs.forEach(input => input.value = '');
-    
-        // Opcional: Ocultar cualquier mensaje de error
-        passwordError.style.display = 'none';
-    });
-    
+    // Objeto para mapear los campos y sus IDs
+    const fields = {
+        'title': 'entry-title',
+        'content': 'entry-content',
+        'finca': 'entry-finca',
+        'author': 'entry-authors',
+        'creation_date': 'entry-creation_date'
+    };
+
+    // Verificar cada campo e imprimir información de debug
+    for (const [fieldName, fieldId] of Object.entries(fields)) {
+        const element = document.getElementById(fieldId);
+        console.log(`Buscando elemento con ID: ${fieldId}`);
+        if (element) {
+            console.log(`Encontrado ${fieldId} con valor: ${element.value}`);
+            formData.append(fieldName, element.value);
+        } else {
+            console.error(`No se encontró el elemento con ID: ${fieldId}`);
+        }
+    }
+
+    // Manejo de archivos
+    const imageInput = document.getElementById('entry-images');
+    const documentInput = document.getElementById('entry-documents');
+
+    if (imageInput) {
+        const imageFiles = imageInput.files;
+        for (let i = 0; i < imageFiles.length; i++) {
+            formData.append('images', imageFiles[i]);
+        }
+    }
+
+    if (documentInput) {
+        const documentFiles = documentInput.files;
+        for (let i = 0; i < documentFiles.length; i++) {
+            formData.append('documents', documentFiles[i]);
+        }
+    }
+
+    // Debug: mostrar todos los datos que se enviarán
+    console.log('Datos a enviar:');
+    for (let pair of formData.entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+
+    try {
+        const submitButton = document.querySelector('.submit-button');
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Enviando...';
+        }
+
+        const response = await fetch('/add_entry', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+        console.log("Respuesta del servidor:", data);
+
+        if (data.success) {
+            alert('Entrada agregada exitosamente');
+            addEntryFormContainer.classList.add('hidden');
+            wikiContainer.style.display = 'block';
+            addEntryForm.reset();
+        } else {
+            alert('Error al agregar la entrada: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error al enviar la entrada:', error);
+        alert('Error al enviar la entrada. Intenta de nuevo más tarde.');
+    } finally {
+        const submitButton = document.querySelector('.submit-button');
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Enviar Entrada';
+        }
+    }
+});
+
+// Botón de "Cancelar" en el formulario
+const cancelButton = document.querySelector('.cancel-button');
+
+cancelButton.addEventListener('click', () => {
+    // Ocultar el formulario y mostrar el wiki
+    addEntryFormContainer.classList.add('hidden');
+    wikiContainer.style.display = 'block';
+
+    // Limpiar los campos del formulario
+    addEntryForm.reset();
+
+    // Si el modal está visible, también lo ocultamos
+    cueModal.classList.remove('show');
+    cueModal.classList.add('hidden');
+});
 
 
 
-    
     // Actualizar el año en el footer
     const currentYear = new Date().getFullYear();
     document.getElementById('current-year').textContent = currentYear;

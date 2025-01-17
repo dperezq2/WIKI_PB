@@ -34,29 +34,66 @@ def load_wiki_entries():
 
         # Consulta SQL para obtener las entradas junto con los documentos y fotos
         cursor.execute(""" 
-            SELECT 
-                CASE 
-                    WHEN core."DESCRIP_FINCA" IS NOT NULL 
-                    THEN COALESCE(core."DESCRIP_FINCA", '') || ': ' || COALESCE(core."DESCRIP_TITULO", '')
-                    ELSE COALESCE(core."DESCRIP_TITULO", '')
-                END AS "DESCRIP_TITULO_COMPLETO",
-                core."DESCRIP_CONTENIDO", 
-                core."UBI_NOMBRE_DIGITADOR",
-                core."_CREATION_DATE",
-                array_agg(documentos."VALUE" ORDER BY documentos."_CREATION_DATE" ASC) AS "DOCUMENTO_BYTES",
-                array_agg(foto."VALUE" ORDER BY foto."_CREATION_DATE" ASC) AS "FOTO_BYTES"
-            FROM "aggregate"."INFO_HISTORICA_PB_CORE" AS core
-            LEFT JOIN "aggregate"."INFO_HISTORICA_PB_DOCUMENTO_BLB" AS documentos
-                ON core."_URI" = documentos."_TOP_LEVEL_AURI"
-            LEFT JOIN "aggregate"."INFO_HISTORICA_PB_FOTO_INFORMACION_BLB" AS foto
-                ON foto."_TOP_LEVEL_AURI" = core."_URI"
-            GROUP BY 
-                core."DESCRIP_TITULO", 
-                core."DESCRIP_FINCA", 
-                core."DESCRIP_CONTENIDO", 
-                core."UBI_NOMBRE_DIGITADOR", 
-                core."_CREATION_DATE"
-            ORDER BY core."_CREATION_DATE" DESC
+
+    -- Datos de INFO_HISTORICA_PB_CORE
+SELECT 
+        CASE 
+            WHEN core."DESCRIP_FINCA" IS NOT NULL 
+            THEN COALESCE(core."DESCRIP_FINCA", '') || ': ' || COALESCE(core."DESCRIP_TITULO", '')
+            ELSE COALESCE(core."DESCRIP_TITULO", '')
+        END AS "DESCRIP_TITULO_COMPLETO",
+        core."DESCRIP_CONTENIDO", 
+        core."UBI_NOMBRE_DIGITADOR",
+        core."_CREATION_DATE",
+        array_agg(documentos."VALUE" ORDER BY documentos."_CREATION_DATE" ASC) AS "DOCUMENTO_BYTES",
+        array_agg(foto."VALUE" ORDER BY foto."_CREATION_DATE" ASC) AS "FOTO_BYTES"
+    FROM "aggregate"."INFO_HISTORICA_PB_CORE" AS core
+    LEFT JOIN "aggregate"."INFO_HISTORICA_PB_DOCUMENTO_BLB" AS documentos
+        ON core."_URI" = documentos."_TOP_LEVEL_AURI"
+    LEFT JOIN "aggregate"."INFO_HISTORICA_PB_FOTO_INFORMACION_BLB" AS foto
+        ON foto."_TOP_LEVEL_AURI" = core."_URI"
+    GROUP BY 
+        core."DESCRIP_FINCA",
+        core."DESCRIP_TITULO",
+        core."DESCRIP_CONTENIDO", 
+        core."UBI_NOMBRE_DIGITADOR",
+        core."_CREATION_DATE"
+
+    UNION
+
+    -- Datos de WIKI_ENTRIES
+    SELECT
+        CASE 
+            WHEN wiki."finca" IS NOT NULL
+            THEN COALESCE(wiki."finca", '') || ': ' || COALESCE(wiki."title", '')
+            ELSE COALESCE(wiki."title", '')
+        END AS "DESCRIP_TITULO_COMPLETO",
+        wiki."content" AS "DESCRIP_CONTENIDO",
+        wiki."author" AS "UBI_NOMBRE_DIGITADOR",
+        wiki."creation_date" AS "_CREATION_DATE",
+        -- Elimina duplicados dentro de los documentos e imágenes de WIKI_ENTRIES
+        array_agg(DISTINCT documents."file" ORDER BY documents."file" ASC) AS "DOCUMENTO_BYTES",
+        array_agg(DISTINCT images."file" ORDER BY images."file" ASC) AS "FOTO_BYTES"
+    FROM "aggregate"."WIKI_ENTRIES" AS wiki
+    LEFT JOIN (
+        SELECT DISTINCT "entry_uri", "file"
+        FROM "aggregate"."WIKI_DOCUMENTS"
+    ) AS documents
+        ON wiki."URI" = documents."entry_uri"
+    LEFT JOIN (
+        SELECT DISTINCT "entry_uri", "file"
+        FROM "aggregate"."WIKI_IMAGES"
+    ) AS images
+        ON wiki."URI" = images."entry_uri"
+    GROUP BY
+        wiki."title", 
+        wiki."finca", 
+        wiki."content", 
+        wiki."author", 
+        wiki."creation_date", 
+        wiki."URI"
+ORDER BY "_CREATION_DATE" DESC;
+
         """)
 
         resultado = cursor.fetchall()

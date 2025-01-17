@@ -317,7 +317,7 @@ body {
     justify-content: flex-end;
     margin-bottom: 20px;
 }
-
+/*
 .add-entry-button {
     padding: 10px 20px;
     background-color: #28a745;
@@ -327,7 +327,7 @@ body {
     cursor: pointer;
     font-weight: bold;
     transition: background-color 0.3s;
-}
+} */
 
 .add-entry-button:hover {
     background-color: #218838;
@@ -380,7 +380,7 @@ body {
 
 .form-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-top: 20px;
 }
 
@@ -592,6 +592,86 @@ footer {
     background-color: #0056b3;
 }
 
+/* Fondo oscuro para el modal */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con transparencia */
+        display: none; /* Inicialmente oculto */
+        justify-content: center;
+        align-items: center;
+        z-index: 1000; /* Asegura que esté sobre otros elementos */
+    }
+
+    /* Estilos para el contenido del modal */
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 300px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal h3 {
+        font-size: 20px;
+        margin-bottom: 15px;
+    }
+
+    #cue-input {
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    .button-modal {
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        margin: 5px;
+    }
+
+    #submit-cue {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    #submit-cue:hover {
+        background-color: #45a049;
+    }
+
+    #close-cue-modal {
+        background-color: white;
+        color: #45a049;
+        border: 1px solid #dfdfdf;
+    }
+
+    .button-modal {
+        width: 100px;
+    }
+
+    #close-cue-modal:hover {
+        background-color: #f5f5f5;
+    }
+
+    #cue-error {
+        margin-top: 10px;
+        font-size: 14px;
+        color: red;
+    }
+
+    /* Para mostrar el modal */
+    .modal.show {
+        display: flex;
+    }
+
 
 /* Media Queries for Fine-Tuning */
 @media screen and (min-width: 768px) {
@@ -690,10 +770,10 @@ footer {
         flex-basis: 100%;
     }
 
-    .modal-content {
+    /* .modal-content {
         width: 90%; /* Ajusta el modal al 90% del ancho de la pantalla en dispositivos móviles */
-        max-width: 90%;
-    }
+    /*  max-width: 90%;*/
+    /*} */
 
     #modal-image {
         width: 100%; /* La imagen se ajusta al 100% del ancho del modal */
@@ -701,6 +781,10 @@ footer {
     }
 
     #clear-button {
+        margin-left: 0;
+    }
+
+    #add-entry-button {
         margin-left: 0;
     }
 

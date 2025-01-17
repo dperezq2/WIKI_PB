@@ -44,22 +44,19 @@
 <div class="search-options">
     <button form="buscar_informacion" type="submit">&#128269; Buscar</button>
     <button type="button" id="clear-button">&#8635; Nueva búsqueda</button>
-    <button type="button" id="add-entry-button">Agregar nueva entrada</button>    
+    <button type="button" id="add-entry-button">&#x1F4DD; Agregar nueva entrada</button>    
 </div>
 
-    <!-- Modal para ingresar contraseña -->
-<div id="password-modal" class="modal hidden">
+<!-- Modal para ingresar CUE -->
+<div id="cue-modal" class="modal hidden">
     <div class="modal-content">
-        <h3>Ingrese la contraseña para agregar una entrada</h3>
-        <input type="password" id="password-input" placeholder="Contraseña">
-        <button id="submit-password">Enviar</button>
-        <button id="close-password-modal">Cerrar</button>
-        <p id="password-error" style="color: red; display: none;">Contraseña incorrecta.</p>
+        <h3>Ingrese su CUE para agregar una entrada</h3>
+        <input type="number" id="cue-input" placeholder="Ingrese su CUE">
+        <button class="button-modal" id="close-cue-modal">Cancelar</button>
+        <button class="button-modal" id="submit-cue">Enviar</button>
+        <p id="cue-error" style="color: red; display: none;">CUE inválido o usuario no autorizado.</p>
     </div>
 </div>
-
-
-
 
 
     <div class="entries">
@@ -191,40 +188,48 @@
     </div>
 </div>
 
-<!-- Formulario de Agregar Entrada (inicialmente oculto) -->
+<!-- Modificación del HTML -->
 <div id="add-entry-form-container" class="add-entry-form-container hidden">
-    <form id="add-entry-form" class="add-entry-form">
-        <h2>Agregar Nueva Entrada</h2>
-        
-        <div class="form-group">
-            <label for="entry-date">Fecha:</label>
-            <input type="date" id="entry-date" name="entry-date" required>
-        </div>
-        <div class="form-group">
-            <label for="entry-problem">Finca (Opcional):</label>
-            <textarea id="entry-problem" name="entry-problem" rows="4"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="entry-title">Título:</label>
-            <input type="text" id="entry-title" name="entry-title" required>
-        </div>
-        <div class="form-group">
-            <label for="entry-subject">Asunto:</label>
-            <input type="text" id="entry-subject" name="entry-subject" required>
-        </div>
-        <div class="form-group">
-            <label for="entry-problem">Contenido:</label>
-            <textarea id="entry-problem" name="entry-problem" rows="4" required></textarea>
-        </div>
-        <div class="form-group">
-            <label for="entry-authors">Autores (separados por coma):</label>
-            <input type="text" id="entry-authors" name="entry-authors" required>
-        </div>
-        <div class="form-actions">
-            <button type="button" class="cancel-button" onclick="hideAddEntryForm()">Cancelar</button>
-            <button type="submit" class="submit-button">Enviar Entrada</button>
-        </div>
-    </form>
+<form id="add-entry-form" class="add-entry-form">
+    <h2>Agregar Nueva Entrada</h2>
+    
+    <div class="form-group">
+        <label for="creation_date">Fecha:</label>
+        <input type="date" id="entry-creation_date" name="creation_date" required>
+    </div>
+    <div class="form-group">
+        <label for="finca">Finca (Opcional):</label>
+        <input type="text" id="entry-finca" name="finca">
+    </div>
+    <div class="form-group">
+        <label for="title">Título:</label>
+        <input type="text" id="entry-title" name="title" required>
+    </div>
+    <div class="form-group">
+        <label for="content">Contenido:</label>
+        <textarea id="entry-content" name="content" rows="4" required></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="images">Imágenes (Opcionales):</label>
+        <input type="file" id="entry-images" name="images" accept="image/*" multiple>
+    </div>
+    <div class="form-group">
+        <label for="documents">Documentos PDF (Opcionales):</label>
+        <input type="file" id="entry-documents" name="documents" accept=".pdf" multiple>
+    </div>
+
+    <div class="form-group">
+        <label for="author">Autor(es) separados por coma (,):</label>
+        <input type="text" id="entry-authors" name="author" required>
+    </div>
+    
+    <div class="form-actions">
+        <button type="button" class="cancel-button">Cancelar</button>
+        <button type="submit" class="submit-button">Enviar Entrada</button>
+    </div>
+</form>
+
 </div>
 
 <!-- Modal de imagen -->
