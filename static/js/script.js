@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log("✅ Script de wiki cargado completamente");
 
 
-    const addEntryButton = document.getElementById('add-entry-button');
+const addEntryButton = document.getElementById('add-entry-button');
 const cueModal = document.getElementById('cue-modal');
 const cueInput = document.getElementById('cue-input');
 const submitCueButton = document.getElementById('submit-cue');
@@ -67,14 +67,87 @@ submitCueButton.addEventListener('click', async () => {
     }
 });
 
-// Enviar el formulario de agregar entrada
+// Variables para almacenar los archivos seleccionados
+let accumulatedImages = [];
+let accumulatedDocuments = [];
+
+// Función para manejar vista previa y acumulación de archivos
+function handleFilePreview(inputElement, previewContainer, fileList, acceptedFileTypes) {
+    const newFiles = Array.from(inputElement.files);
+
+    // Filtrar los archivos aceptados y evitar duplicados
+    newFiles.forEach((file) => {
+        if (
+            (!acceptedFileTypes || acceptedFileTypes.includes(file.type)) &&
+            !fileList.some((existingFile) => existingFile.name === file.name && existingFile.size === file.size)
+        ) {
+            fileList.push(file);
+        }
+    });
+
+    // Limpiar el input para permitir volver a adjuntar el mismo archivo si se elimina
+    inputElement.value = '';
+
+    // Actualizar la vista previa
+    updateFilePreview(previewContainer, fileList, (indexToRemove) => {
+        fileList.splice(indexToRemove, 1); // Eliminar archivo de la lista
+        handleFilePreview(inputElement, previewContainer, fileList, acceptedFileTypes); // Actualizar vista previa
+    });
+}
+
+// Función para actualizar la vista previa
+function updateFilePreview(previewContainer, fileList, onRemove) {
+    previewContainer.innerHTML = ''; // Limpiar vista previa
+
+    fileList.forEach((file, index) => {
+        const filePreview = document.createElement('div');
+        filePreview.classList.add('preview-item');
+
+        // Vista previa de imágenes
+        if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            img.classList.add('preview-image');
+            filePreview.appendChild(img);
+        }
+
+        // Nombre del archivo
+        const fileName = document.createElement('span');
+        fileName.textContent = file.name;
+        filePreview.appendChild(fileName);
+
+        // Botón para eliminar
+        const removeButton = document.createElement('span');
+        removeButton.textContent = 'Eliminar';
+        removeButton.classList.add('remove-file');
+        removeButton.addEventListener('click', () => onRemove(index));
+        filePreview.appendChild(removeButton);
+
+        previewContainer.appendChild(filePreview);
+    });
+}
+
+// Configuración de eventos para acumulación de imágenes
+const imageInput = document.getElementById('entry-images');
+const imagePreviewContainer = document.getElementById('image-preview-container');
+imageInput.addEventListener('change', () => {
+    handleFilePreview(imageInput, imagePreviewContainer, accumulatedImages, ['image/jpeg', 'image/png', 'image/gif']);
+});
+
+// Configuración de eventos para acumulación de documentos
+const documentInput = document.getElementById('entry-documents');
+const documentPreviewContainer = document.getElementById('document-preview-container');
+documentInput.addEventListener('change', () => {
+    handleFilePreview(documentInput, documentPreviewContainer, accumulatedDocuments, ['application/pdf']);
+});
+
+// Modificar el envío del formulario para incluir todos los archivos acumulados
 addEntryForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    // Crear FormData manualmente
     const formData = new FormData();
-    
-    // Objeto para mapear los campos y sus IDs
+
+    // Añadir otros campos del formulario
     const fields = {
         'title': 'entry-title',
         'content': 'entry-content',
@@ -83,62 +156,56 @@ addEntryForm.addEventListener('submit', async (event) => {
         'creation_date': 'entry-creation_date'
     };
 
-    // Verificar cada campo e imprimir información de debug
     for (const [fieldName, fieldId] of Object.entries(fields)) {
         const element = document.getElementById(fieldId);
-        console.log(`Buscando elemento con ID: ${fieldId}`);
         if (element) {
-            console.log(`Encontrado ${fieldId} con valor: ${element.value}`);
             formData.append(fieldName, element.value);
-        } else {
-            console.error(`No se encontró el elemento con ID: ${fieldId}`);
         }
     }
 
-    // Manejo de archivos
-    const imageInput = document.getElementById('entry-images');
-    const documentInput = document.getElementById('entry-documents');
-
-    if (imageInput) {
-        const imageFiles = imageInput.files;
-        for (let i = 0; i < imageFiles.length; i++) {
-            formData.append('images', imageFiles[i]);
-        }
-    }
-
-    if (documentInput) {
-        const documentFiles = documentInput.files;
-        for (let i = 0; i < documentFiles.length; i++) {
-            formData.append('documents', documentFiles[i]);
-        }
-    }
-
-    // Debug: mostrar todos los datos que se enviarán
-    console.log('Datos a enviar:');
-    for (let pair of formData.entries()) {
-        console.log(pair[0] + ': ' + pair[1]);
-    }
+    // Añadir archivos acumulados
+    accumulatedImages.forEach((file) => formData.append('images', file));
+    accumulatedDocuments.forEach((file) => formData.append('documents', file));
 
     try {
+        // Desactivar el botón para evitar múltiples envíos
         const submitButton = document.querySelector('.submit-button');
-        if (submitButton) {
-            submitButton.disabled = true;
-            submitButton.textContent = 'Enviando...';
-        }
+        submitButton.disabled = true;
+        submitButton.textContent = 'Enviando...';
 
+        // Enviar los datos al servidor
         const response = await fetch('/add_entry', {
             method: 'POST',
             body: formData
         });
 
         const data = await response.json();
-        console.log("Respuesta del servidor:", data);
 
         if (data.success) {
+            // Mostrar mensaje de éxito
             alert('Entrada agregada exitosamente');
+
+            // Ocultar el formulario de entrada y mostrar el wiki
             addEntryFormContainer.classList.add('hidden');
             wikiContainer.style.display = 'block';
+
+            // Limpiar acumuladores y vistas previas
+            accumulatedImages = [];
+            accumulatedDocuments = [];
+            imagePreviewContainer.innerHTML = '';
+            documentPreviewContainer.innerHTML = '';
+
+            // Limpiar el formulario de entrada
             addEntryForm.reset();
+
+            // **Importante: No mostrar el modal después del envío exitoso**
+            cueModal.classList.remove('show');
+            cueModal.classList.add('hidden');
+            cueInput.value = '';
+            cueError.style.display = 'none';  // Ocultar mensaje de error
+
+            // Desactivar el formulario de agregar entrada para evitar más envíos.
+            addEntryForm.classList.add('submitted'); // Marcar el formulario como enviado
         } else {
             alert('Error al agregar la entrada: ' + data.error);
         }
@@ -146,30 +213,36 @@ addEntryForm.addEventListener('submit', async (event) => {
         console.error('Error al enviar la entrada:', error);
         alert('Error al enviar la entrada. Intenta de nuevo más tarde.');
     } finally {
+        // Habilitar el botón de envío de nuevo
         const submitButton = document.querySelector('.submit-button');
-        if (submitButton) {
-            submitButton.disabled = false;
-            submitButton.textContent = 'Enviar Entrada';
-        }
+        submitButton.disabled = false;
+        submitButton.textContent = 'Enviar Entrada';
     }
 });
 
-// Botón de "Cancelar" en el formulario
 const cancelButton = document.querySelector('.cancel-button');
 
+
+// Modificar el comportamiento de "Cancelar"
 cancelButton.addEventListener('click', () => {
-    // Ocultar el formulario y mostrar el wiki
+    // Si el formulario ya fue enviado, no mostrar el modal ni hacer nada
+    if (addEntryForm.classList.contains('submitted')) {
+        return; // No hacer nada si ya se envió el formulario
+    }
+
+    // Ocultar el formulario de entrada y mostrar el wiki
     addEntryFormContainer.classList.add('hidden');
     wikiContainer.style.display = 'block';
 
     // Limpiar los campos del formulario
     addEntryForm.reset();
 
-    // Si el modal está visible, también lo ocultamos
+    // Asegurarse de que el modal del CUE esté oculto
     cueModal.classList.remove('show');
     cueModal.classList.add('hidden');
+    cueInput.value = '';
+    cueError.style.display = 'none';  // Ocultar mensaje de error
 });
-
 
 
     // Actualizar el año en el footer
@@ -248,14 +321,7 @@ cancelButton.addEventListener('click', () => {
         entryDetailsContent.innerHTML = entryDetails.innerHTML;
         
         
-        document.getElementById('wiki-container').style.display = 'none'; // Ocultar solo la lista de entradas
-        /*     
-        // Ocultar todos los elementos de búsqueda (inputs y selects)
-        const searchOptions = document.querySelectorAll('.search-options');
-        searchOptions.forEach(function(option) {
-            option.style.display = 'none'; // Ocultar cada uno de los elementos de búsqueda
-        });
-        */   
+        document.getElementById('wiki-container').style.display = 'none'; // Ocultar solo la lista de entradas 
         entryDetailsContainer.classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' }); // Volver al inicio
     };
@@ -309,3 +375,4 @@ cancelButton.addEventListener('click', () => {
         window.location.href = "/";
     });
 });
+

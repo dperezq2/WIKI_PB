@@ -672,6 +672,32 @@ footer {
         display: flex;
     }
 
+    .preview-container {
+        margin-top: 10px;
+    }
+    .preview-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+    .preview-item span {
+        margin-left: 10px;
+        font-size: 14px;
+    }
+    .remove-file {
+        margin-left: 10px;
+        cursor: pointer;
+        color: red;
+    }
+    .preview-image {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: cover;
+        margin-right: 10px;
+    }
+    
+
+
 
 /* Media Queries for Fine-Tuning */
 @media screen and (min-width: 768px) {
