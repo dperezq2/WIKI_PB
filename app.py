@@ -2,22 +2,95 @@ from flask import Flask, render_template, request, jsonify
 from models import WikiEntry
 from utils import load_wiki_entries, search_entries
 import base64
+import logging
+import redis
 import os
 import psycopg2
 import uuid
 import datetime
+import requests
 from dotenv import load_dotenv
-
+from flask import Flask, Response, jsonify
+from utils import get_access_token, load_wiki_entries
+from urllib.parse import quote
 
 app = Flask(__name__)
+
+# Cargar variables de entorno
+load_dotenv()
+
+# Configuración de ODK
+ODK_URL = os.getenv('ODK_URL')
+ODK_USERNAME = os.getenv('ODK_USERNAME')
+ODK_PASSWORD = os.getenv('ODK_PASSWORD')
+ODK_FORMULARIO = os.getenv('ODK_FORMULARIO')
 
 # Asegúrate de permitir 'data:' en tu CSP
 @app.after_request
 def apply_csp(response):
     # Política CSP en una sola línea, actualizada para permitir archivos estáticos
-    csp = "default-src 'self'; script-src 'self' 'unsafe-inline' https://code.jquery.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self' blob: data:;"
-    response.headers['Content-Security-Policy'] = csp
+    csp_policy = (
+        "img-src * data:; "
+        "object-src 'self';"
+        "script-src 'self' 'unsafe-inline';"
+        "report-uri /csp-report"
+        "default-src 'none'; connect-src 'self'; font-src 'self'; frame-src 'self'"
+        
+    )
+    response.headers['Content-Security-Policy'] = csp_policy
     return response
+
+
+@app.route('/test-auth')
+def test_auth():
+    try:
+        token = get_access_token()
+        return jsonify({"status": "success", "token": token})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
+
+from flask import Response, jsonify
+import requests
+from urllib.parse import quote
+from flask import Response, jsonify
+import requests
+from urllib.parse import quote
+
+@app.route('/archivo/<int:project_id>/<string:form_id>/<string:submission_id>/<string:filename>')
+def get_file(project_id, form_id, submission_id, filename):
+    try:
+        token = get_access_token()
+        odk_endpoint = f"{ODK_URL}/v1/projects/{project_id}/forms/{form_id}/submissions/{submission_id}/attachments/{quote(filename)}"
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0"
+        }
+
+        # Realizamos la solicitud
+        response = requests.get(odk_endpoint, headers=headers, stream=True)
+
+        # Verificamos si la solicitud fue exitosa
+        if response.status_code == 200:
+            content_type = response.headers.get('Content-Type', '')
+            
+            # Si es una imagen
+            if 'image' in content_type:
+                return Response(response.content, content_type=content_type)
+            
+            # Si es un archivo PDF
+            elif 'pdf' in content_type:
+                return Response(response.content, content_type="application/pdf")
+            
+            else:
+                return jsonify({"error": "Tipo de archivo no compatible"}), 415
+        else:
+            return jsonify({"error": f"Error {response.status_code}: {response.text}"}), response.status_code
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 
@@ -67,9 +140,6 @@ def index():
 
 # Define las contraseñas válidas como una lista simple
 VALID_PASSWORDS = ['admin123', 'editor456', 'user789']
-
-# Cargar variables de entorno
-load_dotenv()
 
 # Definir las variables de configuración para la base de datos
 DB_NAME = os.getenv('DB_NAME')
@@ -238,14 +308,29 @@ def add_entry():
             'error_type': str(type(e))
         })
 
+@app.route('/get_form_url', methods=['GET'])
+def get_form_url():
+    return jsonify({"url": os.getenv('ODK_FORMULARIO', '#')})
 
+# Redis para caché
+redis_host = os.getenv('REDIS_HOST', 'localhost')
+redis_port = int(os.getenv('REDIS_PORT', 6379))
+redis_client = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
 
+# Logger
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-
-
-
-
-
+@app.route('/invalidate_cache', methods=['POST'])
+def invalidate_cache():
+    try:
+        # Eliminar caché de entradas
+        redis_client.delete("wiki_entries")
+        logger.info("Caché de entradas eliminado")
+        return jsonify({"success": True}), 200
+    except Exception as e:
+        logger.error(f"Error al invalidar el caché: {str(e)}")
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 

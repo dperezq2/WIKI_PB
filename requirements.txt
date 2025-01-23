@@ -1,8 +1,11 @@
 blinker==1.9.0
+certifi==2024.12.14
+charset-normalizer==3.4.1
 click==8.1.7
 colorama==0.4.6
 Flask==3.1.0
 gunicorn==23.0.0
+idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.4
 logging==0.4.9.6
@@ -11,4 +14,6 @@ packaging==24.2
 psycopg2-binary==2.9.10
 python-dotenv==1.0.1
 redis==5.2.1
+requests==2.32.3
+urllib3==2.3.0
 Werkzeug==3.1.3

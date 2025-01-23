@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 const addEntryButton = document.getElementById('add-entry-button');
+
+/*------------LAS PARTES COMENTADAS ES PORQUE QUITÉ LO DEL FORMULARIO PROPIO EN LA PÁGINA------------------ */
+/*------------AHORA SE ABRE EN UNA NUEVA PESTAÑA EL FORMULARIO DE ODK------------------ */
+
+/*
 const cueModal = document.getElementById('cue-modal');
 const cueInput = document.getElementById('cue-input');
 const submitCueButton = document.getElementById('submit-cue');
@@ -12,7 +17,9 @@ const addEntryFormContainer = document.getElementById('add-entry-form-container'
 const wikiContainer = document.getElementById('wiki-container');
 const authorInput = document.getElementById('entry-authors');  // Mantener esta referencia
 const addEntryForm = document.getElementById('add-entry-form');
+*/
 
+/*
 // Mantener formulario oculto inicialmente
 addEntryFormContainer.classList.add('hidden');
 
@@ -28,8 +35,54 @@ closeModalButton.addEventListener('click', () => {
     cueModal.classList.add('hidden');
     cueInput.value = '';  // Limpiar el campo de entrada
     cueError.style.display = 'none';  // Ocultar mensaje de error
+}); */
+
+
+addEntryButton.addEventListener('click', async () => {
+    try {
+        // Hacer la solicitud al endpoint para obtener la URL
+        const response = await fetch('/get_form_url');
+        
+        if (!response.ok) {
+            throw new Error(`Error al obtener la URL: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        const odkFormularioUrl = data.url; // Extraer la URL del JSON
+
+        // Verificar si la URL está configurada
+        if (odkFormularioUrl && odkFormularioUrl !== '#') {
+            // Abrir la URL en una nueva pestaña
+            const odkWindow = window.open(odkFormularioUrl, '_blank');
+
+            // Monitorear el cierre de la ventana emergente
+            const checkWindowInterval = setInterval(async () => {
+                if (odkWindow.closed) {
+                    clearInterval(checkWindowInterval);
+                    console.log('Formulario ODK enviado y ventana cerrada');
+                    
+                    // Realizar la solicitud al servidor para actualizar el caché
+                    try {
+                        await fetch('/invalidate_cache', { method: 'POST' });
+                        console.log('Caché invalidado correctamente');
+                        // También podrías recargar la página o actualizar la vista de las entradas si es necesario
+                    } catch (error) {
+                        console.error('Error al invalidar el caché', error);
+                    }
+                }
+            }, 1000);  // Verifica cada segundo si la ventana está cerrada
+        } else {
+            console.error('La URL del formulario no está configurada o es inválida.');
+        }
+    } catch (error) {
+        console.error('Error al intentar abrir el formulario:', error);
+    }
 });
 
+
+
+
+/*
 // Validar CUE y mostrar el formulario de agregar entrada
 submitCueButton.addEventListener('click', async () => {
     const enteredCue = cueInput.value.trim();
@@ -243,7 +296,7 @@ cancelButton.addEventListener('click', () => {
     cueInput.value = '';
     cueError.style.display = 'none';  // Ocultar mensaje de error
 });
-
+*/
 
     // Actualizar el año en el footer
     const currentYear = new Date().getFullYear();
@@ -255,35 +308,19 @@ cancelButton.addEventListener('click', () => {
         if (event.target.classList.contains('view-pdf')) {
             console.log("🖱️ Click detectado en un botón PDF.");
             const button = event.target;
-
-            // Depurar el atributo `data-pdf`
-            const pdfBase64 = button.getAttribute('data-pdf');
-            if (!pdfBase64) {
+    
+            // Verificar si el atributo 'data-pdf' está presente
+            const pdfUrl = button.getAttribute('data-pdf');
+            console.log("Atributo 'data-pdf' del botón:", pdfUrl);
+    
+            if (!pdfUrl) {
                 console.error("❌ No se encontró el atributo 'data-pdf' en el botón:", button);
                 return;
             }
-
-            // Validar si el contenido es Base64
-            if (!/^([A-Za-z0-9+/=]+)$/.test(pdfBase64)) {
-                console.error("❌ Base64 no válido detectado:", pdfBase64);
-                return;
-            }
-
-            console.log("🔍 PDF Base64 detectado correctamente. Procesando...");
-
+    
+            console.log("🔍 PDF URL detectado correctamente:", pdfUrl);
+    
             try {
-                // Convertir Base64 a Blob
-                const pdfBlob = new Blob(
-                    [Uint8Array.from(atob(pdfBase64), c => c.charCodeAt(0))],
-                    { type: 'application/pdf' }
-                );
-
-                console.log("✅ PDF convertido a Blob exitosamente:", pdfBlob);
-
-                // Generar una URL temporal para el Blob
-                const pdfUrl = URL.createObjectURL(pdfBlob);
-                console.log("🌐 URL del PDF generada:", pdfUrl);
-
                 // Abrir el PDF en una nueva ventana/tab
                 const newWindow = window.open(pdfUrl, '_blank');
                 if (newWindow) {
@@ -293,16 +330,17 @@ cancelButton.addEventListener('click', () => {
                     console.error("❌ No se pudo abrir una nueva ventana. Verifica las configuraciones del navegador.");
                 }
             } catch (error) {
-                console.error("❌ Error al procesar el PDF:", error.message);
+                console.error("❌ Error al abrir el PDF:", error.message);
             }
         }
+    
         // Detectar el clic en el botón "Ver más"
         else if (event.target.classList.contains('view-more')) {
             const entryId = event.target.getAttribute('data-entry-id');
             console.log(`🔍 Intentando mostrar detalles para la entrada: ${entryId}`);
             toggleEntryDetails(entryId);
         }
-
+    
         // Detectar el clic en una imagen para ampliarla o reducirla
         if (event.target.tagName.toLowerCase() === 'img' && event.target.classList.contains('img-adjunta')) {
             const image = event.target;
@@ -310,6 +348,8 @@ cancelButton.addEventListener('click', () => {
             image.classList.toggle('enlarged');
         }
     });
+    
+    
 
     // Función para mostrar detalles de una entrada
     window.toggleEntryDetails = function (entryId) {
@@ -330,13 +370,6 @@ cancelButton.addEventListener('click', () => {
     window.goBack = function () {
         
         document.getElementById('wiki-container').style.display = 'block'; // Mostrar la lista
-        /*
-        // Mostrar todos los elementos de búsqueda nuevamente
-        const searchOptions = document.querySelectorAll('.search-options');
-            searchOptions.forEach(function(option) {
-            option.style.display = 'flex'; // Mostrar cada uno de los elementos de búsqueda
-        });
-        */
         document.getElementById('entry-details-container').classList.add('hidden');
     };
 

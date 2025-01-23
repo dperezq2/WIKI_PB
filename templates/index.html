@@ -4,234 +4,244 @@
 <div class="wiki-container" id="wiki-container">
     <!-- Formulario de búsqueda -->
     <form method="GET" action="/" id="buscar_informacion">
-    <!-- Primera búsqueda -->
+        <!-- Primera búsqueda -->
+        <div class="search-options">
+            <input type="text" name="query1" value="{{ query1 }}" placeholder="Buscar..." />
+            <select name="search_type1">
+                <option value="title" {% if search_type1=='title' %}selected{% endif %}>Título</option>
+                <option value="content" {% if search_type1=='content' %}selected{% endif %}>Contenido</option>
+                <option value="authors" {% if search_type1=='authors' %}selected{% endif %}>Autor</option>
+                <option value="finca" {% if search_type1=='finca' %}selected{% endif %}>Finca</option>
+                <option value="plaga" {% if search_type1=='plaga' %}selected{% endif %}>Plaga</option>
+            </select>
+        </div>
+
+        <!-- Segunda búsqueda -->
+        <div class="search-options">
+            <input type="text" name="query2" value="{{ query2 }}" placeholder="Buscar..." />
+            <select name="search_type2">
+                <option value="content" {% if search_type2=='content' %}selected{% endif %}>Contenido</option>
+                <option value="title" {% if search_type2=='title' %}selected{% endif %}>Título</option>
+                <option value="authors" {% if search_type2=='authors' %}selected{% endif %}>Autor</option>
+                <option value="finca" {% if search_type2=='finca' %}selected{% endif %}>Finca</option>
+                <option value="plaga" {% if search_type2=='plaga' %}selected{% endif %}>Plaga</option>
+            </select>
+        </div>
+
+        <!-- Tercera búsqueda -->
+        <div class="search-options">
+            <input type="text" name="query3" value="{{ query3 }}" placeholder="Buscar..." />
+            <select name="search_type3">
+                <option value="finca" {% if search_type3=='finca' %}selected{% endif %}>Finca</option>
+                <option value="title" {% if search_type3=='title' %}selected{% endif %}>Título</option>
+                <option value="content" {% if search_type3=='content' %}selected{% endif %}>Contenido</option>
+                <option value="authors" {% if search_type3=='authors' %}selected{% endif %}>Autor</option>
+                <option value="plaga" {% if search_type3=='plaga' %}selected{% endif %}>Plaga</option>
+            </select>
+        </div>
+
+    </form>
     <div class="search-options">
-        <input type="text" name="query1" value="{{ query1 }}" placeholder="Buscar..." />
-        <select name="search_type1">
-            <option value="title" {% if search_type1 == 'title' %}selected{% endif %}>Título</option>
-            <option value="content" {% if search_type1 == 'content' %}selected{% endif %}>Contenido</option>
-            <option value="authors" {% if search_type1 == 'authors' %}selected{% endif %}>Autor</option>
-            <option value="finca" {% if search_type1 == 'finca' %}selected{% endif %}>Finca</option>
-            <option value="plaga" {% if search_type1 == 'plaga' %}selected{% endif %}>Plaga</option>
-        </select>
+        <button form="buscar_informacion" type="submit">&#128269; Buscar</button>
+        <button type="button" id="clear-button">&#8635; Nueva búsqueda</button>
+        <button type="button" id="add-entry-button">&#x1F4DD; Agregar nueva entrada</button>
     </div>
 
-    <!-- Segunda búsqueda -->
-    <div class="search-options">
-        <input type="text" name="query2" value="{{ query2 }}" placeholder="Buscar..." />
-        <select name="search_type2">
-            <option value="content" {% if search_type2 == 'content' %}selected{% endif %}>Contenido</option>
-            <option value="title" {% if search_type2 == 'title' %}selected{% endif %}>Título</option>
-            <option value="authors" {% if search_type2 == 'authors' %}selected{% endif %}>Autor</option>
-            <option value="finca" {% if search_type2 == 'finca' %}selected{% endif %}>Finca</option>
-            <option value="plaga" {% if search_type2 == 'plaga' %}selected{% endif %}>Plaga</option>
-        </select>
+    <!-- Modal para ingresar CUE -->
+    <div id="cue-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Ingrese su CUE para agregar una entrada</h3>
+            <input type="number" id="cue-input" placeholder="Ingrese su CUE">
+            <button class="button-modal" id="close-cue-modal">Cancelar</button>
+            <button class="button-modal" id="submit-cue">Enviar</button>
+            <p id="cue-error" style="color: red; display: none;">CUE inválido o usuario no autorizado.</p>
+        </div>
     </div>
-
-    <!-- Tercera búsqueda -->
-    <div class="search-options">
-        <input type="text" name="query3" value="{{ query3 }}" placeholder="Buscar..." />
-        <select name="search_type3">
-            <option value="finca" {% if search_type3 == 'finca' %}selected{% endif %}>Finca</option>
-            <option value="title" {% if search_type3 == 'title' %}selected{% endif %}>Título</option>
-            <option value="content" {% if search_type3 == 'content' %}selected{% endif %}>Contenido</option>
-            <option value="authors" {% if search_type3 == 'authors' %}selected{% endif %}>Autor</option>
-            <option value="plaga" {% if search_type3 == 'plaga' %}selected{% endif %}>Plaga</option>
-        </select>
-    </div>
-        
-</form>
-<div class="search-options">
-    <button form="buscar_informacion" type="submit">&#128269; Buscar</button>
-    <button type="button" id="clear-button">&#8635; Nueva búsqueda</button>
-    <button type="button" id="add-entry-button">&#x1F4DD; Agregar nueva entrada</button>    
-</div>
-
-<!-- Modal para ingresar CUE -->
-<div id="cue-modal" class="modal hidden">
-    <div class="modal-content">
-        <h3>Ingrese su CUE para agregar una entrada</h3>
-        <input type="number" id="cue-input" placeholder="Ingrese su CUE">
-        <button class="button-modal" id="close-cue-modal">Cancelar</button>
-        <button class="button-modal" id="submit-cue">Enviar</button>
-        <p id="cue-error" style="color: red; display: none;">CUE inválido o usuario no autorizado.</p>
-    </div>
-</div>
 
 
     <div class="entries">
         {% if query1 or query2 or query3 %}
-        <h2>Resultados para: 
+        <h2>Resultados para:
             {% if query1 %} "{{ query1 }}" {% endif %}
             {% if query2 %} "{{ query2 }}" {% endif %}
             {% if query3 %} "{{ query3 }}" {% endif %}
         </h2>
-            {% if num_results %}
-                <div class="entry-list">
-                    <p><strong>{{ num_results }}</strong> resultado(s) encontrado(s) para los criterios seleccionados.</p>
-                    {% for entry in entries %}
-                        <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
-                            <div class="entry-summary">
-                                <h3>{{ entry.title }}</h3>
-                                <p>{{ entry.content[:475] }}...</p>
-                                <!-- Mostrar el contador de archivos -->
-                                <p style="color: blue; text-decoration: underline;">Archivos adjuntos: {{ entry.documentos|length + entry.fotos|length }}</p>
-                                <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
-                                <button class="view-more" data-entry-id="entry-{{ loop.index }}" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Leer más</button>
-                            </div>
-                            <!-- Detalles de la entrada (ocultos inicialmente) -->
-                            <div class="entry-details hidden">
-                                <h1>{{ entry.title }}</h1>
-                                <div>
-                                    {{ entry.content.replace('\n', '<br>') | safe }}
-                                </div>
-                                
-                                <h3>Imágenes</h3>
-                                <!-- Imágenes -->
-                                <div class="modal-section-images">
-                                    <div class="images">
-                                        {% for image in entry.fotos %}                                            
-                                            <img class="img-adjunta" src="data:image/jpeg;base64,{{ image }}" alt="Imagen de la entrada" />
-                                        {% else %}
-                                            <p>No hay imágenes disponibles.</p>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                <h3>Documentos</h3>
-                                <!-- Archivos -->
-                                <div class="modal-section-attachments">
-                                    <div class="files-container">
-                                        {% for file in entry.documentos %}
-                                            <div class="file-card">
-                                                <div class="file-preview">
-                                                    <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF" class="file-icon">
-                                                </div>
-                                                <div class="file-name">
-                                                    <button class="view-pdf" data-pdf="{{ file.base64 }}">
-                                                        Ver Documento {{ loop.index }}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                                <p>
-                                    <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
-                                </p>
-                            </div>
-                        </div>
-                    {% endfor %}
+        {% if num_results %}
+        <div class="entry-list">
+            <p><strong>{{ num_results }}</strong> resultado(s) encontrado(s) para los criterios seleccionados.</p>
+            {% for entry in entries %}
+            <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
+                <div class="entry-summary">
+                    <h3>{{ entry.title }}</h3>
+                    <p>{{ entry.content[:475] }}...</p>
+                    <!-- Mostrar el contador de archivos -->
+                    <p style="color: blue; text-decoration: underline;">Archivos adjuntos: {{ entry.documentos|length +
+                        entry.fotos|length }}</p>
+                    <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
+                    <button class="view-more" data-entry-id="entry-{{ loop.index }}"
+                        onclick="toggleEntryDetails('entry-{{ loop.index }}')">Leer más</button>
                 </div>
-            {% else %}
-                <p>No se encontraron resultados para la búsqueda.</p>
-            {% endif %}
-        {% else %}
-            <h2>Todas las Entradas</h2>
-            <div class="entry-list">
-                {% for entry in entries %}
-                    <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
-                        <div class="entry-summary">
-                            <h3>{{ entry.title }}</h3>
-                            <p>{{ entry.content[:475] }}...</p>
-                            <!-- Mostrar el contador de archivos -->
-                            <p style="color: blue; text-decoration: underline;">Archivos adjuntos: {{ entry.documentos|length + entry.fotos|length }}</p>
-                            <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
-                            <button class="view-more" data-entry-id="entry-{{ loop.index }}" onclick="toggleEntryDetails('entry-{{ loop.index }}')">Leer más</button>
-                        </div>
-                        <!-- Detalles de la entrada (ocultos inicialmente) -->
-                        <div class="entry-details hidden">
-                            <h1>{{ entry.title }}</h1> <!-- Detalles del contenido -->
-                            <div>
-                                {{ entry.content.replace('\n', '<br>') | safe }}
-                            </div>
-                            
-                            <!-- Imágenes -->
-                            <h3>Imágenes</h3>
-                            <div class="modal-section-images">
-                                <div class="images">
-                                    {% for image in entry.fotos %}
-                                        <img class="img-adjunta" src="data:image/jpeg;base64,{{ image }}" alt="Imagen de la entrada" />
-                                    {% else %}
-                                        <p>No hay imágenes disponibles.</p>
-                                    {% endfor %}
-                                </div>
-                            </div>
+                <!-- Detalles de la entrada (ocultos inicialmente) -->
+                <div class="entry-details hidden">
+                    <h1>{{ entry.title }}</h1>
+                    <div>
+                        {{ entry.content.replace('\n', '<br>') | safe }}
+                    </div>
 
-                            <!-- Archivos -->
-                            <h3>Documentos</h3>
-                            <div class="modal-section-attachments">
-                                
-                                <div class="files-container">
-                                    {% for file in entry.documentos %}
-                                        <div class="file-card">
-                                            <div class="file-preview">
-                                                <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF" class="file-icon">
-                                            </div>
-                                            <div class="file-name">
-                                                <button class="view-pdf" data-pdf="{{ file.base64 }}">
-                                                    Ver Documento {{ loop.index }}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            <p>
-                                <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
-                            </p>
-                            
+                    <h3>Imágenes</h3>
+                    <!-- Imágenes -->
+                    <div class="modal-section-images">
+                        <div class="images">
+                            {% for foto in entry.fotos %}
+                                <img class="img-adjunta" src="{{ foto.url }}" alt="Imagen de la entrada" />
+                            {% else %}
+                                <p>No hay imágenes disponibles.</p>
+                            {% endfor %}
                         </div>
                     </div>
-                {% endfor %}
+                    
+                    <h3>Documentos</h3>
+                    <!-- Archivos -->
+                    <div class="modal-section-attachments">
+                        <div class="files-container">
+                            {% for file in entry.documentos %}
+                            <div class="file-card">
+                                <div class="file-preview">
+                                    <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF"
+                                        class="file-icon">
+                                </div>
+                                <div class="file-name">
+                                    <button class="view-pdf" 
+                                            data-pdf="{{ url_for('get_file', project_id=1, form_id='INFO_HISTORICA_PB', submission_id=file.instanceID, filename=file.filename) }}">
+                                        Ver Documento {{ loop.index }}
+                                    </button>
+                                </div>
+                                
+                                
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p>
+                        <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
+                    </p>
+                </div>
             </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No se encontraron resultados para la búsqueda.</p>
+        {% endif %}
+        {% else %}
+        <h2>Todas las Entradas</h2>
+        <div class="entry-list">
+            {% for entry in entries %}
+            <div class="entry" id="entry-{{ loop.index }}" data-content="{{ entry.content }}">
+                <div class="entry-summary">
+                    <h3>{{ entry.title }}</h3>
+                    <p>{{ entry.content[:475] }}...</p>
+                    <!-- Mostrar el contador de archivos -->
+                    <p style="color: blue; text-decoration: underline;">Archivos adjuntos: {{ entry.documentos|length +
+                        entry.fotos|length }}</p>
+                    <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
+                    <button class="view-more" data-entry-id="entry-{{ loop.index }}"
+                        onclick="toggleEntryDetails('entry-{{ loop.index }}')">Leer más</button>
+                </div>
+                <!-- Detalles de la entrada (ocultos inicialmente) -->
+                <div class="entry-details hidden">
+                    <h1>{{ entry.title }}</h1>
+                    <div>{{ entry.content.replace('\n', '<br>') | safe }}</div>
+
+                    <!-- Mostrar imágenes -->
+                    <h3>Imágenes</h3>
+                    <div class="modal-section-images">
+                        <div class="images">
+                            {% for foto in entry.fotos %}
+                            <img class="img-adjunta" src="{{ foto.url }}" alt="Imagen de la entrada" />
+                            {% else %}
+                            <p>No hay imágenes disponibles.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Mostrar documentos PDF -->
+                    <h3>Documentos</h3>
+                    <div class="modal-section-attachments">
+                        <div class="files-container">
+                            {% for file in entry.documentos %}
+                            <div class="file-card">
+                                <div class="file-preview">
+                                    <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF"
+                                        class="file-icon">
+                                </div>
+                                <p>Instance ID: {{ file.instanceID }}</p>
+                                <p>Filename: {{ file.filename }}</p>
+                                <div class="file-name">
+                                    <button class="view-pdf" 
+                                            data-pdf="{{ url_for('get_file', project_id=1, form_id='INFO_HISTORICA_PB', submission_id=file.instanceID, filename=file.filename) }}">
+                                        Ver Documento {{ loop.index }}
+                                    </button>
+                                </div>
+                                
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <p>
+                        <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
         {% endif %}
     </div>
 </div>
 
 <!-- Modificación del HTML -->
 <div id="add-entry-form-container" class="add-entry-form-container hidden">
-<form id="add-entry-form" class="add-entry-form">
-    <h2>Agregar Nueva Entrada</h2>
-    
-    <div class="form-group">
-        <label for="creation_date">Fecha:</label>
-        <input type="date" id="entry-creation_date" name="creation_date" required>
-    </div>
-    <div class="form-group">
-        <label for="finca">Finca (Opcional):</label>
-        <input type="text" id="entry-finca" name="finca">
-    </div>
-    <div class="form-group">
-        <label for="title">Título:</label>
-        <input type="text" id="entry-title" name="title" required>
-    </div>
-    <div class="form-group">
-        <label for="content">Contenido:</label>
-        <textarea id="entry-content" name="content" rows="4" required></textarea>
-    </div>
+    <form id="add-entry-form" class="add-entry-form">
+        <h2>Agregar Nueva Entrada</h2>
 
-    <div class="form-group">
-        <label for="images">Imágenes (Opcionales):</label>
-        <input type="file" id="entry-images" name="images" accept="image/*" multiple>
-        <div id="image-preview-container" class="preview-container"></div>
-    </div>
-    <div class="form-group">
-        <label for="documents">Documentos PDF (Opcionales):</label>
-        <input type="file" id="entry-documents" name="documents" accept=".pdf" multiple>
-        <div id="document-preview-container" class="preview-container"></div>
-    </div>
-    
+        <div class="form-group">
+            <label for="creation_date">Fecha:</label>
+            <input type="date" id="entry-creation_date" name="creation_date" required>
+        </div>
+        <div class="form-group">
+            <label for="finca">Finca (Opcional):</label>
+            <input type="text" id="entry-finca" name="finca">
+        </div>
+        <div class="form-group">
+            <label for="title">Título:</label>
+            <input type="text" id="entry-title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="content">Contenido:</label>
+            <textarea id="entry-content" name="content" rows="4" required></textarea>
+        </div>
 
-    <div class="form-group">
-        <label for="author">Autor(es) separados por coma (,):</label>
-        <input type="text" id="entry-authors" name="author" required>
-    </div>
-    
-    <div class="form-actions">
-        <button type="button" class="cancel-button">Cancelar</button>
-        <button type="submit" class="submit-button">Enviar Entrada</button>
-    </div>
-</form>
+        <div class="form-group">
+            <label for="images">Imágenes (Opcionales):</label>
+            <input type="file" id="entry-images" name="images" accept="image/*" multiple>
+            <div id="image-preview-container" class="preview-container"></div>
+        </div>
+        <div class="form-group">
+            <label for="documents">Documentos PDF (Opcionales):</label>
+            <input type="file" id="entry-documents" name="documents" accept=".pdf" multiple>
+            <div id="document-preview-container" class="preview-container"></div>
+        </div>
+
+
+        <div class="form-group">
+            <label for="author">Autor(es) separados por coma (,):</label>
+            <input type="text" id="entry-authors" name="author" required>
+        </div>
+
+        <div class="form-actions">
+            <button type="button" class="cancel-button">Cancelar</button>
+            <button type="submit" class="submit-button">Enviar Entrada</button>
+        </div>
+    </form>
 
 </div>
 
