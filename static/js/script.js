@@ -52,25 +52,32 @@ addEntryButton.addEventListener('click', async () => {
 
         // Verificar si la URL está configurada
         if (odkFormularioUrl && odkFormularioUrl !== '#') {
-            // Abrir la URL en una nueva pestaña
+            // Intentar abrir la URL en una nueva pestaña
             const odkWindow = window.open(odkFormularioUrl, '_blank');
-
-            // Monitorear el cierre de la ventana emergente
-            const checkWindowInterval = setInterval(async () => {
-                if (odkWindow.closed) {
-                    clearInterval(checkWindowInterval);
-                    console.log('Formulario ODK enviado y ventana cerrada');
-                    
-                    // Realizar la solicitud al servidor para actualizar el caché
-                    try {
-                        await fetch('/invalidate_cache', { method: 'POST' });
-                        console.log('Caché invalidado correctamente');
-                        // También podrías recargar la página o actualizar la vista de las entradas si es necesario
-                    } catch (error) {
-                        console.error('Error al invalidar el caché', error);
+            
+            // Si window.open() devuelve null, significa que la ventana fue bloqueada
+            if (!odkWindow) {
+                console.error('La ventana emergente fue bloqueada. Intentando redirigir...');
+                // Intentar redirigir a la misma pestaña si no se puede abrir una nueva
+                window.location.href = odkFormularioUrl;
+            } else {
+                // Si la ventana se abrió correctamente, monitoreamos su estado
+                const checkWindowInterval = setInterval(async () => {
+                    if (odkWindow.closed) {
+                        clearInterval(checkWindowInterval);
+                        console.log('Formulario ODK enviado y ventana cerrada');
+                        
+                        // Realizar la solicitud al servidor para actualizar el caché
+                        try {
+                            await fetch('/invalidate_cache', { method: 'POST' });
+                            console.log('Caché invalidado correctamente');
+                            // También podrías recargar la página o actualizar la vista de las entradas si es necesario
+                        } catch (error) {
+                            console.error('Error al invalidar el caché', error);
+                        }
                     }
-                }
-            }, 1000);  // Verifica cada segundo si la ventana está cerrada
+                }, 1000);  // Verifica cada segundo si la ventana está cerrada
+            }
         } else {
             console.error('La URL del formulario no está configurada o es inválida.');
         }
@@ -78,6 +85,7 @@ addEntryButton.addEventListener('click', async () => {
         console.error('Error al intentar abrir el formulario:', error);
     }
 });
+
 
 
 
