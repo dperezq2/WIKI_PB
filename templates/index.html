@@ -3,7 +3,7 @@
 {% block content %}
 <div class="wiki-container" id="wiki-container">
     <!-- Formulario de búsqueda -->
-    <form method="GET" action="/" id="buscar_informacion">
+    <form method="GET" action="/wiki" id="buscar_informacion">
         <!-- Primera búsqueda -->
         <div class="search-options">
             <input type="text" name="query1" value="{{ query1 }}" placeholder="Buscar..." />
@@ -13,6 +13,7 @@
                 <option value="authors" {% if search_type1=='authors' %}selected{% endif %}>Autor</option>
                 <option value="finca" {% if search_type1=='finca' %}selected{% endif %}>Finca</option>
                 <option value="plaga" {% if search_type1=='plaga' %}selected{% endif %}>Plaga</option>
+                <option value="todo" {% if search_type1=='todo' %}selected{% endif %}>Todo</option>
             </select>
         </div>
 
@@ -25,6 +26,7 @@
                 <option value="authors" {% if search_type2=='authors' %}selected{% endif %}>Autor</option>
                 <option value="finca" {% if search_type2=='finca' %}selected{% endif %}>Finca</option>
                 <option value="plaga" {% if search_type2=='plaga' %}selected{% endif %}>Plaga</option>
+                <option value="todo" {% if search_type2=='todo' %}selected{% endif %}>Todo</option>
             </select>
         </div>
 
@@ -37,6 +39,7 @@
                 <option value="content" {% if search_type3=='content' %}selected{% endif %}>Contenido</option>
                 <option value="authors" {% if search_type3=='authors' %}selected{% endif %}>Autor</option>
                 <option value="plaga" {% if search_type3=='plaga' %}selected{% endif %}>Plaga</option>
+                <option value="todo" {% if search_type3=='todo' %}selected{% endif %}>Todo</option>
             </select>
         </div>
 
@@ -93,35 +96,46 @@
                     <div class="modal-section-images">
                         <div class="images">
                             {% for foto in entry.fotos %}
-                                <img class="img-adjunta" src="{{ foto.url }}" alt="Imagen de la entrada" />
+                            <img class="img-adjunta" src="{{ foto.url }}" alt="Imagen de la entrada" />
                             {% else %}
-                                <p>No hay imágenes disponibles.</p>
+                            <p>No hay imágenes disponibles.</p>
                             {% endfor %}
                         </div>
                     </div>
-                    
+
                     <h3>Documentos</h3>
                     <!-- Archivos -->
                     <div class="modal-section-attachments">
                         <div class="files-container">
                             {% for file in entry.documentos %}
+                            {% if not (file.filename.endswith('.mp4') or file.filename.endswith('.mp3')) %}
                             <div class="file-card">
                                 <div class="file-preview">
-                                    <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF"
-                                        class="file-icon">
+                                    <img src="{% if file.filename.endswith('.pdf') %}{{ url_for('static', filename='img/icons/pdf-icon.svg') }}
+                                {% elif file.filename.endswith('.doc') or file.filename.endswith('.docx') %}{{ url_for('static', filename='img/icons/doc-icon.svg') }}
+                                {% elif file.filename.endswith('.xls') or file.filename.endswith('.xlsx') %}{{ url_for('static', filename='img/icons/xls-icon.svg') }}
+                                {% elif file.filename.endswith('.ppt') or file.filename.endswith('.pptx') %}{{ url_for('static', filename='img/icons/ppt-icon.svg') }}
+                                {% elif file.filename.endswith('.jpeg') or file.filename.endswith('.jpg') %}{{ url_for('static', filename='img/icons/jpg-icon.svg') }}
+                                {% elif file.filename.endswith('.png')%}{{ url_for('static', filename='img/icons/png-icon.svg') }}
+                                {% elif file.filename.endswith('.txt')%}{{ url_for('static', filename='img/icons/txt-icon.svg') }}
+                                {% elif file.filename.endswith('.zip')%}{{ url_for('static', filename='img/icons/zip-icon.svg') }}
+                                {% elif file.filename.endswith('.xml')%}{{ url_for('static', filename='img/icons/xml-icon.svg') }}
+                                {% elif file.filename.endswith('.csv')%}{{ url_for('static', filename='img/icons/csv-icon.svg') }}
+                                {% else %}{{ url_for('static', filename='img/icons/default-icon.svg') }}{% endif %}">
                                 </div>
                                 <div class="file-name">
-                                    <button class="view-pdf" 
-                                            data-pdf="{{ url_for('get_file', project_id=1, form_id='INFO_HISTORICA_PB', submission_id=file.instanceID, filename=file.filename) }}">
-                                        Ver Documento {{ loop.index }}
-                                    </button>
+                                    <a href="{{ url_for('get_file', project_id=1, form_id='INFO_HISTORICA_PB', submission_id=file.instanceID, filename=file.filename) }}"
+                                        target="_blank" class="file-link">
+                                        {{ file.filename }}
+                                    </a>
                                 </div>
-                                
-                                
                             </div>
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>
+
+
                     <p>
                         <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
                     </p>
@@ -164,29 +178,39 @@
                         </div>
                     </div>
 
-                    <!-- Mostrar documentos PDF -->
+                    <!-- Mostrar documentos -->
                     <h3>Documentos</h3>
                     <div class="modal-section-attachments">
                         <div class="files-container">
                             {% for file in entry.documentos %}
+                            {% if not (file.filename.endswith('.mp4') or file.filename.endswith('.mp3')) %}
                             <div class="file-card">
                                 <div class="file-preview">
-                                    <img src="{{ url_for('static', filename='img/logo_pdf.png') }}" alt="PDF"
-                                        class="file-icon">
+                                    <img src="{% if file.filename.endswith('.pdf') %}{{ url_for('static', filename='img/icons/pdf-icon.svg') }}
+                                {% elif file.filename.endswith('.doc') or file.filename.endswith('.docx') %}{{ url_for('static', filename='img/icons/doc-icon.svg') }}
+                                {% elif file.filename.endswith('.xls') or file.filename.endswith('.xlsx') %}{{ url_for('static', filename='img/icons/xls-icon.svg') }}
+                                {% elif file.filename.endswith('.ppt') or file.filename.endswith('.pptx') %}{{ url_for('static', filename='img/icons/ppt-icon.svg') }}
+                                {% elif file.filename.endswith('.jpeg') or file.filename.endswith('.jpg') %}{{ url_for('static', filename='img/icons/jpg-icon.svg') }}
+                                {% elif file.filename.endswith('.png')%}{{ url_for('static', filename='img/icons/png-icon.svg') }}
+                                {% elif file.filename.endswith('.txt')%}{{ url_for('static', filename='img/icons/txt-icon.svg') }}
+                                {% elif file.filename.endswith('.zip')%}{{ url_for('static', filename='img/icons/zip-icon.svg') }}
+                                {% elif file.filename.endswith('.xml')%}{{ url_for('static', filename='img/icons/xml-icon.svg') }}
+                                {% elif file.filename.endswith('.csv')%}{{ url_for('static', filename='img/icons/csv-icon.svg') }}
+                                {% else %}{{ url_for('static', filename='img/icons/default-icon.svg') }}{% endif %}">
                                 </div>
-                                <p>Instance ID: {{ file.instanceID }}</p>
-                                <p>Filename: {{ file.filename }}</p>
                                 <div class="file-name">
-                                    <button class="view-pdf" 
-                                            data-pdf="{{ url_for('get_file', project_id=1, form_id='INFO_HISTORICA_PB', submission_id=file.instanceID, filename=file.filename) }}">
-                                        Ver Documento {{ loop.index }}
-                                    </button>
+                                    <a href="{{ url_for('get_file', project_id=1, form_id='INFO_HISTORICA_PB', submission_id=file.instanceID, filename=file.filename) }}"
+                                        target="_blank" class="file-link">
+                                        {{ file.filename }}
+                                    </a>
                                 </div>
-                                
                             </div>
+                            {% endif %}
                             {% endfor %}
                         </div>
                     </div>
+
+
                     <p>
                         <small>Fecha: {{ entry.creation_date }} | Autor(es): {{ entry.authors | join(", ") }}</small>
                     </p>

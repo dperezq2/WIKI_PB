@@ -41,7 +41,7 @@ closeModalButton.addEventListener('click', () => {
 addEntryButton.addEventListener('click', async () => {
     try {
         // Hacer la solicitud al endpoint para obtener la URL
-        const response = await fetch('/get_form_url');
+        const response = await fetch('wiki/get_form_url');
         
         if (!response.ok) {
             throw new Error(`Error al obtener la URL: ${response.statusText}`);
@@ -69,7 +69,7 @@ addEntryButton.addEventListener('click', async () => {
                         
                         // Realizar la solicitud al servidor para actualizar el caché
                         try {
-                            await fetch('/invalidate_cache', { method: 'POST' });
+                            await fetch('wiki/invalidate_cache', { method: 'POST' });
                             console.log('Caché invalidado correctamente');
                             // También podrías recargar la página o actualizar la vista de las entradas si es necesario
                         } catch (error) {
@@ -413,7 +413,7 @@ cancelButton.addEventListener('click', () => {
         document.querySelector('select[name="search_type3"]').value = "";
 
         // Opcional: recargar la página sin parámetros para eliminar los resultados filtrados
-        window.location.href = "/";
+        window.location.href = "/wiki";
     });
 });
 

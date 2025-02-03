@@ -143,18 +143,12 @@ body {
     max-height: none;
 }
 
-.modal-section-attachments {
+/*.modal-section-attachments {
     margin-top: 20px;
-}
+}*/
 
-.files-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.file-card {
-    width: 120px;
+/*.file-card {
+    /* width: 120px;
     height: 170px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -162,37 +156,60 @@ body {
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-}
+}*/
 
-.file-card:hover {
+/*.file-card:hover {
     transform: scale(1.05);
+}*/
+
+.files-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Tres columnas del mismo tamaño */
+    gap: 20px; /* Espacio entre elementos */
+    width: 100%; /* O ajusta según el diseño */
 }
 
 .file-link {
-    text-decoration: none;
-    color: inherit;
+    text-decoration: underline; 
+    color: blue;
 }
 
-.file-preview {
+/*.file-preview {
     padding: 10px;
     background-color: #f7f7f7;
     height: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
-}
+}*/
 
-.file-icon {
+/*.file-icon {
     width: 40px;
     height: 40px;
-}
+}*/
 
 .file-name {
     padding: 10px;
-    font-size: 14px;
     font-weight: bold;
     color: #333;
+    /*overflow: hidden;*/
+    /*white-space: nowrap;*/
+    /*text-overflow: ellipsis; /* Corta texto largo con "..." */
+    /*max-width: 180px;*/
+} 
+
+.file-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
 }
+
+.file-preview img {
+    width: 36px;
+    height: 36px;
+}
+
 
 .pdf-viewer-container {
     position: fixed;
@@ -766,7 +783,7 @@ footer {
         margin-top: 10px;
         text-align: right;
         bottom: auto;
-        right: auto;
+        right: -300px; /**/
     }
 
     /* Ajustes adicionales para mantener la funcionalidad */
@@ -791,9 +808,17 @@ footer {
         white-space: normal;
     }
 
+    .files-container {
+        grid-template-columns: repeat(1, 1fr); /* Una columna en móviles */
+    }
+
     .file-item,
     .image-preview-item {
         flex-basis: 100%;
+    }
+
+    .files-container {
+        justify-content: center;
     }
 
     /* .modal-content {
@@ -833,5 +858,13 @@ footer {
 
     #footer-text {
         font-size: 14px; /* Reducir el tamaño del texto en móviles */
+    }
+}
+
+
+/* Para pantallas medianas (tablets) */
+@media (max-width: 1024px) and (min-width: 768px) {
+    .files-container {
+        grid-template-columns: repeat(2, 1fr); /* Dos columnas en pantallas medianas */
     }
 }

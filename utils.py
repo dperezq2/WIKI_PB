@@ -3,12 +3,13 @@ import psycopg2
 import unicodedata
 import requests
 import redis
-import logging
 import json
+import logging
 from flask import request
 from urllib.parse import quote
 from dotenv import load_dotenv
 from models import WikiEntry
+from datetime import datetime
 
 # Cargar variables de entorno
 load_dotenv()
@@ -29,6 +30,7 @@ ODK_PASSWORD = os.getenv('ODK_PASSWORD')
 redis_host = os.getenv('REDIS_HOST', 'localhost')
 redis_port = int(os.getenv('REDIS_PORT', 6379))
 redis_client = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
+
 
 # Logger
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -74,35 +76,38 @@ def load_wiki_entries():
         cursor = conn.cursor()
 
         query = """
-        SELECT
-            (xpath('//fecha_t_datos/text()', d.xml::xml))[1]::TEXT AS fecha_t_datos,
-            (xpath('//nombre_digitador/text()', d.xml::xml))[1]::TEXT AS nombre_digitador,
-            CONCAT(
-                COALESCE((xpath('//finca/text()', d.xml::xml))[1]::TEXT, ''),
-                CASE 
-                    WHEN (xpath('//finca/text()', d.xml::xml))[1] IS NOT NULL THEN ': ' 
-                    ELSE '' 
-                END,
-                COALESCE((xpath('//titulo/text()', d.xml::xml))[1]::TEXT, '')
-            ) AS descrip_titulo_completo,
-            (xpath('//contenido/text()', d.xml::xml))[1]::TEXT AS contenido,
-            g."xmlFormId" AS xmlFormId,
-            (xpath('//meta/instanceID/text()', d.xml::xml))[1]::TEXT AS instanceID,
-            STRING_AGG(a.name, ', ') AS file_names
-        FROM
-            "public"."submission_defs" AS d
-        LEFT JOIN
-            "public"."submission_attachments" AS a ON d.id = a."submissionDefId"
-        JOIN
-            "public"."form_defs" AS f ON d."formDefId" = f.id
-        JOIN
-            "public"."forms" AS g ON f."formId" = g.id
-        WHERE
-            g."xmlFormId" = 'INFO_HISTORICA_PB'
-        GROUP BY
-            d.id, d.xml, g."xmlFormId"
-        ORDER BY 
-            d."createdAt" DESC;
+            SELECT
+                (xpath('//fecha_t_datos/text()', d.xml::xml))[1]::TEXT AS fecha_t_datos,
+                (xpath('//nombre_digitador/text()', d.xml::xml))[1]::TEXT AS nombre_digitador,
+                CONCAT(
+                    COALESCE((xpath('//finca/text()', d.xml::xml))[1]::TEXT, ''),
+                    CASE 
+                        WHEN (xpath('//finca/text()', d.xml::xml))[1] IS NOT NULL THEN ': ' 
+                        ELSE '' 
+                    END,
+                    COALESCE((xpath('//titulo/text()', d.xml::xml))[1]::TEXT, '')
+                ) AS descrip_titulo_completo,
+                (xpath('//contenido/text()', d.xml::xml))[1]::TEXT AS contenido,
+                g."xmlFormId" AS xmlFormId,
+                (xpath('//meta/instanceID/text()', d.xml::xml))[1]::TEXT AS instanceID,
+                STRING_AGG(a.name, ', ') AS file_names
+            FROM
+                "public"."submission_defs" AS d 
+            LEFT JOIN
+                "public"."submission_attachments" AS a ON d.id = a."submissionDefId"
+            JOIN
+                "public"."form_defs" AS f ON d."formDefId" = f.id
+            JOIN
+                "public"."forms" AS g ON f."formId" = g.id
+            JOIN
+            "public"."submissions" AS s ON d."instanceId" = s."instanceId"
+            WHERE
+                g."xmlFormId" = 'INFO_HISTORICA_PB' and
+                s."deletedAt" IS NULL
+            GROUP BY
+                d.id, d.xml, g."xmlFormId"
+            ORDER BY 
+                d."createdAt" DESC;
         """
 
         cursor.execute(query)
@@ -122,28 +127,33 @@ def load_wiki_entries():
                     'instanceID': row[5],
                     'filename': file
                 }
-                for file in file_names if file.endswith('.pdf')
+                for file in file_names 
+                # if file.endswith('.pdf')
             ]
+            
 
             # Generar URLs dinámicas para las fotos
             fotos = [
                 {
-                    'url': f"/archivo/{1}/INFO_HISTORICA_PB/{row[5]}/{file}",
+                    'url': f"/wiki/archivo/{1}/INFO_HISTORICA_PB/{row[5]}/{file}",
                     'token': token
                 }
-                for file in file_names if file.endswith(('.jpg', '.png'))
+                for file in file_names if file.endswith(('.jpg', '.jpeg','.png'))
             ]
+            
 
             # Crear entrada Wiki
             entry = WikiEntry(
                 title=row[2],
                 content=row[3],
                 authors=[row[1]] if row[1] else [],
-                creation_date=row[0],
+                creation_date = (
+                    datetime.strptime(row[0], "%Y-%m-%d").strftime("%d-%m-%Y") if row[0] else None
+                ),
                 documentos=documentos,
                 fotos=fotos
             )
-
+            
             # Agregar conteo total de adjuntos
             entry.attachments_count = len(documentos) + len(fotos)
             entries.append(entry)
@@ -190,6 +200,14 @@ def search_entries(entries, criteria):
         elif search_type == 'plaga':
             # Buscar en título y contenido
             return query in normalize(entry.title) or query in normalize(entry.content)
+        elif search_type == 'todo':
+        # Buscar en título, contenido y autores (convertidos a string)
+            return (
+                query in normalize(entry.title) or
+                query in normalize(entry.content) or
+                query in normalize(", ".join(entry.authors))
+            )
+
 
     # Crear la clave del caché basada en los criterios
     cache_key = f"search_entries:{json.dumps(criteria)}"

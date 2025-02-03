@@ -13,6 +13,8 @@ from dotenv import load_dotenv
 from flask import Flask, Response, jsonify
 from utils import get_access_token, load_wiki_entries
 from urllib.parse import quote
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.wrappers import Response
 
 app = Flask(__name__)
 
@@ -53,9 +55,14 @@ def test_auth():
 from flask import Response, jsonify
 import requests
 from urllib.parse import quote
-from flask import Response, jsonify
-import requests
-from urllib.parse import quote
+
+
+@app.route('/routes')
+def show_routes():
+    routes = []
+    for rule in app.url_map.iter_rules():
+        routes.append({"route": rule.rule, "methods": list(rule.methods)})
+    return jsonify(routes)
 
 @app.route('/archivo/<int:project_id>/<string:form_id>/<string:submission_id>/<string:filename>')
 def get_file(project_id, form_id, submission_id, filename):
@@ -75,22 +82,16 @@ def get_file(project_id, form_id, submission_id, filename):
         # Verificamos si la solicitud fue exitosa
         if response.status_code == 200:
             content_type = response.headers.get('Content-Type', '')
-            
-            # Si es una imagen
-            if 'image' in content_type:
-                return Response(response.content, content_type=content_type)
-            
-            # Si es un archivo PDF
-            elif 'pdf' in content_type:
-                return Response(response.content, content_type="application/pdf")
-            
-            else:
-                return jsonify({"error": "Tipo de archivo no compatible"}), 415
+
+            # Retorna el contenido con el tipo de archivo apropiado
+            return Response(response.content, content_type=content_type)
+
         else:
             return jsonify({"error": f"Error {response.status_code}: {response.text}"}), response.status_code
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 
@@ -308,7 +309,7 @@ def add_entry():
             'error_type': str(type(e))
         })
 
-@app.route('/get_form_url', methods=['GET'])
+@app.route('/wiki/get_form_url', methods=['GET'])
 def get_form_url():
     return jsonify({"url": os.getenv('ODK_FORMULARIO', '#')})
 
@@ -321,7 +322,7 @@ redis_client = redis.StrictRedis(host=redis_host, port=redis_port, db=0)
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-@app.route('/invalidate_cache', methods=['POST'])
+@app.route('/wiki/invalidate_cache', methods=['POST'])
 def invalidate_cache():
     try:
         # Eliminar caché de entradas
@@ -332,6 +333,11 @@ def invalidate_cache():
         logger.error(f"Error al invalidar el caché: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
+
+app.wsgi_app = DispatcherMiddleware(
+    Response('Not Found', status=404),
+    {'/wiki': app.wsgi_app}
+)
 
 
 if __name__ == '__main__':
