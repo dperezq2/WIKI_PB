@@ -135,7 +135,7 @@ def load_wiki_entries():
             # Generar URLs dinámicas para las fotos
             fotos = [
                 {
-                    'url': f"/wiki/archivo/{1}/INFO_HISTORICA_PB/{row[5]}/{file}",
+                    'url': f"/archivo/{1}/INFO_HISTORICA_PB/{row[5]}/{file}",
                     'token': token
                 }
                 for file in file_names if file.endswith(('.jpg', '.jpeg','.png'))
@@ -176,6 +176,9 @@ def load_wiki_entries():
 
 def normalize(text):
     """Normalizar texto eliminando acentos, convirtiendo a minúsculas y eliminando caracteres no deseados."""
+    if text is None:
+        return ""  # O devolver un valor por defecto si prefieres otro tipo de manejo
+    
     text = unicodedata.normalize('NFKD', text)
     text = ''.join(c for c in text if not unicodedata.combining(c))  # Eliminar caracteres combinados (acentos)
     text = text.strip()  # Eliminar espacios extra al inicio y final

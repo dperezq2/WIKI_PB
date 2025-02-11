@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Wiki PB{% endblock %}</title>
     <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user_menu.css') }}">
 </head>
+
 <body>
     <header class="header">
         <div class="header-logo">
@@ -14,11 +18,22 @@
             <h1 class="header-title">WIKI PB</h1>
         </div>
         <div class="animated-banner">
-            <span id="rotating-text">Bienvenido a la Wiki de Palo Blanco - Explora, aprende y contribuye: el conocimiento está en tus manos.</span>
+            <span id="rotating-text">Bienvenido a la Wiki de Palo Blanco - Explora, aprende y contribuye: el
+                conocimiento está en tus manos.</span>
         </div>
     </header>
-    
-    
+
+
+    <div class="user-menu" onclick="toggleMenu()">
+        <i class="fas fa-user-circle user-icon"></i>
+        <div id="userDropdown" class="dropdown-menu">
+            <p>{{ user_name }}</p> <!-- Nombre del usuario -->
+            <p class="user-email">{{ user_email }}</p> <!-- Correo del usuario -->
+            <a href="{{ url_for('logout') }}" class="logout-btn">Cerrar Sesión</a>
+        </div>
+    </div>
+
+
     <div class="container">
         {% block content %}{% endblock %}
     </div>
@@ -26,6 +41,7 @@
     <button id="scroll-to-top" class="scroll-to-top" title="Volver al inicio">↑</button>
 
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/user_menu.js') }}"></script>
 </body>
 <footer>
     <p id="footer-text">

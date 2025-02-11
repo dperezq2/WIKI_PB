@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Usuarios</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/manage_users.css') }}">
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </button>
+        <h2>Administrar Usuarios</h2>
+
+        <!-- Campo de búsqueda -->
+        <input type="text" id="search" placeholder="Buscar por correo..." oninput="searchUsers()">
+
+        <div class="users-list" id="users-list">
+            <!-- Los usuarios serán cargados aquí -->
+            {% for user in users %}
+            <div class="user-row" data-id="{{ user.id }}">
+                <div class="user-info">
+                    <h3>{{ user.nombre1 }} {{ user.apellido1 }}</h3>
+                    <p>{{ user.correo }}</p>
+                    <p>Estado:
+                        <select id="status_{{ user.id }}" class="styled-select" onchange="updateUser('{{ user.id }}')">
+                            <option value="1" {% if user.estado==1 %}selected{% endif %}>Activo</option>
+                            <option value="0" {% if user.estado==0 %}selected{% endif %}>Inactivo</option>
+                        </select>
+                    </p>
+                    <p> Contraseña:
+                        <input type="password" id="password_{{ user.id }}" class="styled-input"
+                            placeholder="Nueva contraseña">
+                    </p>
+                </div>
+                <button onclick="updateUser('{{ user.id }}')">
+                    <i class="fas fa-save guardar"></i> Guardar
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <script>
+        function searchUsers() {
+            let query = document.getElementById('search').value;
+
+            fetch(`/search_users?query=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const usersList = document.getElementById('users-list');
+                    usersList.innerHTML = '';  // Limpiar la lista actual
+
+                    // Mostrar los usuarios filtrados
+                    data.forEach(user => {
+                        const userRow = document.createElement('div');
+                        userRow.classList.add('user-row');
+
+                        userRow.innerHTML = `
+                            <div class="user-info">
+        <h3>${user.nombre1} ${user.apellido1}</h3>
+        <p>${user.correo}</p>
+        <p>Estado: 
+            <select id="status_${user.id}" class="styled-select" onchange="updateUser('${user.id}')">
+                <option value="1" ${user.estado === 1 ? 'selected' : ''}>Activo</option>
+                <option value="0" ${user.estado === 0 ? 'selected' : ''}>Inactivo</option>
+            </select>
+        </p> Contraseña:
+        <input type="password" id="password_${user.id}" class="styled-input" placeholder="Nueva contraseña">
+    </div>
+    <button onclick="updateUser('${user.id}')">
+        <i class="fas fa-save"></i> Guardar
+    </button>
+                        `;
+
+                        usersList.appendChild(userRow);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error al buscar usuarios:", error);
+                    alert("Hubo un error al buscar usuarios.");
+                });
+        }
+
+        function updateUser(userId) {
+            // Obtener los valores del estado y la contraseña
+            const newStatus = document.getElementById("status_" + userId).value;
+            const newPassword = document.getElementById("password_" + userId).value;
+
+            const data = {
+                user_id: userId,
+                new_status: newStatus,
+                new_password: newPassword || ''  // Si no se cambia la contraseña, enviar vacío
+            };
+
+            fetch("{{ url_for('update_user') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);  // Mostrar el mensaje de éxito
+                    } else {
+                        alert("Hubo un error al actualizar el usuario.");
+                    }
+                })
+                .catch(error => {
+                    alert("Error en la conexión.");
+                });
+        }
+
+
+        function updateStatus(userId, status) {
+            fetch(`/update_status/${userId}/${status}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log("Estado actualizado");
+                    } else {
+                        alert("Hubo un error al actualizar el estado.");
+                    }
+                });
+        }
+
+        function logout() {
+            window.location.href = "/logout";
+        }
+    </script>
+</body>
+
+</html>

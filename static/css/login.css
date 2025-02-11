@@ -1,0 +1,138 @@
+/* Estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #3aae2a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 20px;
+}
+
+button:hover {
+    background: #3aae2a;
+}
+
+
+
+.error {
+    color: red;
+    margin-top: 0.5rem;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15px;
+    
+}
+
+.logo {
+    max-width: 200px; /* Ajusta el tamaño según necesites */
+    height: auto;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.register-link a {
+    color: #3aae2a;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.microsoft-login {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.microsoft-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px;
+    background: #ffffff;
+    color: #000;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.microsoft-btn img {
+    width: 20px;
+    height: 20px;
+}
+
+.microsoft-btn:hover {
+    background: #f4f4f4;
+    transform: scale(1.02);
+}
+
+
+/* Responsivo */
+@media (max-width: 480px) {
+    .login-container {
+        width: 90%;
+    }
+}

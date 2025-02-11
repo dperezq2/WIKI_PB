@@ -1,0 +1,54 @@
+<!-- templates/login.html -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <form action="{{ url_for('login') }}" method="post" class="login-form">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='img/wiki_black.png') }}" alt="Logo" class="logo">
+            </div>
+            <h2>Iniciar Sesión</h2>
+            {% if error %}
+            <p style="text-align: center;" class="error">{{ error }}</p>
+            <br>
+            {% endif %}
+            <div class="input-group">
+                <label for="email">Usuario</label>
+                <input type="input" id="email" name="email" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+
+            <button type="submit" class="btn">
+                <i class="fas fa-sign-in-alt"></i> Ingresar
+            </button>
+
+            <!-- Dentro de login-container, después del formulario de inicio de sesión -->
+            <div class="microsoft-login">
+                <a href="{{ url_for('auth_microsoft') }}" class="microsoft-btn">
+                    <img src="{{ url_for('static', filename='img/logo_microsoft.svg') }}" alt="Microsoft Logo">
+                    Ingresar con Microsoft
+                </a>
+            </div>
+
+            <p class="register-link">
+                ¿No tienes una cuenta? <a href="{{ url_for('register') }}">Crear cuenta</a>
+            </p>
+
+        </form>
+    </div>
+</body>
+
+</html>

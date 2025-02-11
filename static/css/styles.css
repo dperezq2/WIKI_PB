@@ -7,6 +7,7 @@ body {
     padding: 0;
 }
 
+
 /* Contenedor principal */
 .container {
     width: 60vw;
@@ -287,24 +288,10 @@ body {
 }
 
 /* Caja para imágenes */
-.modal-section-images {
-    /*background-color: #f9f9f9;*/
-    padding: 20px;
-    /*border-radius: 5px;*/
-    margin-top: 20px;
-    /*border: 1px solid #ddd;*/
-    /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);*/
-}
-
-.modal-section-images h3 {
-    margin-bottom: 10px;
-    color: #333;
-}
-
 .modal-section-images .images {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 3 columnas iguales */
+    gap: 15px; /* Espaciado entre imágenes */
 }
 
 .modal-section-images .images img {
@@ -313,9 +300,43 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     /*width: 100px; /* Ajusta el tamaño de las imágenes según necesites */
     height: 300px; /* Ajusta el tamaño de las imágenes según necesites */
-    object-fit: cover; /* Asegura que las imágenes mantengan la proporción */
+    
 }
 
+.viewer {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /*background: rgba(0, 0, 0, 0.8);*/
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(100px); /* Aplica un desenfoque al fondo */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    justify-content: center;
+    align-items: center;;
+}
+
+.viewer img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+}
+
+.close {
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    font-size: 50px;
+    color: white;
+    cursor: pointer;
+}
+
+.no-scroll {
+    overflow: hidden;
+    height: 100vh; /* Asegura que el usuario no pueda hacer scroll */
+}
 
 /* Estilos para el banner animado */
 .animated-banner {
@@ -839,6 +860,10 @@ footer {
         margin-left: 0;
     }
 
+    .modal-section-images .images {
+        grid-template-columns: repeat(1, 1fr); /* 2 columnas en tablets */
+    }
+
     .img-adjunta.enlarged {
         left: 0;
         transform: none; /* Eliminar la traslación y el escalado */
@@ -866,5 +891,14 @@ footer {
 @media (max-width: 1024px) and (min-width: 768px) {
     .files-container {
         grid-template-columns: repeat(2, 1fr); /* Dos columnas en pantallas medianas */
+    }
+
+
+}
+
+/* Para móviles pequeños */
+@media screen and (max-width: 480px) {
+    .modal-section-images .images {
+        grid-template-columns: repeat(1, 1fr); /* 1 columna en móviles */
     }
 }

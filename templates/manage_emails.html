@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Correos</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/png">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/manage_emails.css') }}">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Botón de salir en la parte superior -->
+        <div class="top-bar">
+            <a href="/logout" class="logout-button">Salir</a>
+        </div>
+        <h2 class="page-title">Administrar Correos</h2>
+
+        <!-- Formulario para Insertar Nuevo Correo -->
+        <div class="insert-email">
+            <h3>Insertar Nuevo Correo Electrónico</h3>
+            <form id="insertEmailForm">
+                <input type="email" id="correo" name="correo" placeholder="Correo electrónico" required
+                    class="form-input">
+                <button type="submit" class="submit-btn">Agregar</button>
+            </form>
+        </div>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <h3>Filtrar Correos</h3>
+            <form method="get" action="{{ url_for('manage_emails') }}">
+                <input type="text" name="email" placeholder="Filtrar por correo"
+                    value="{{ request.args.get('email', '') }}" class="form-input">
+                <select name="estado" class="form-select">
+                    <option value="">Filtrar por estado</option>
+                    <option value="Activo" {% if request.args.get('estado')=='1' %}selected{% endif %}>Activo</option>
+                    <option value="Inactivo" {% if request.args.get('estado')=='0' %}selected{% endif %}>Inactivo
+                    </option>
+                </select>
+                <select name="usado" class="form-select">
+                    <option value="">Filtrar por usado</option>
+                    <option value="1" {% if request.args.get('usado')=='Usado' %}selected{% endif %}>Sí</option>
+                    <option value="0" {% if request.args.get('usado')=='No_usado' %}selected{% endif %}>No</option>
+                </select>
+                <button type="submit" class="submit-btn">Filtrar</button>
+            </form>
+        </div>
+
+        <!-- Tabla de Correos -->
+        <div class="email-list">
+            {% for email in emails %}
+            <div class="email-row">
+                <form class="email-form" id="emailForm_{{ email.id }}" data-email-id="{{ email.id }}">
+                    <div class="email-info">
+                        <input type="email" name="correo" value="{{ email.correo }}" class="form-input">
+                    </div>
+                    <div class="email-info">
+                        <select name="estado" class="form-select">
+                            <option value="Activo" {% if email.estado=="Activo" %}selected{% endif %}>Activo</option>
+                            <option value="Inactivo" {% if email.estado=="Inactivo" %}selected{% endif %}>Inactivo
+                            </option>
+                        </select>
+                    </div>
+                    <div class="email-info">
+                        <select name="usado" class="form-select">
+                            <option value="1" {% if email.usado==1 %}selected{% endif %}>Sí</option>
+                            <option value="0" {% if email.usado==0 %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                    <button type="button" class="submit-btn" onclick="updateEmail('{{ email.id }}')">Actualizar</button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('insertEmailForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            fetch('/insert_email', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+        });
+
+        // Función para actualizar los correos
+        function updateEmail(emailId) {
+            const form = document.getElementById('emailForm_' + emailId);
+            const formData = new FormData(form);
+
+            fetch('/update_email/' + emailId, {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+        }
+    </script>
+</body>
+
+</html>

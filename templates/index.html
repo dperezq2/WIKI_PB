@@ -3,7 +3,7 @@
 {% block content %}
 <div class="wiki-container" id="wiki-container">
     <!-- Formulario de búsqueda -->
-    <form method="GET" action="/wiki" id="buscar_informacion">
+    <form method="GET" action="/search" id="buscar_informacion">
         <!-- Primera búsqueda -->
         <div class="search-options">
             <input type="text" name="query1" value="{{ query1 }}" placeholder="Buscar..." />
@@ -90,9 +90,9 @@
                     <div>
                         {{ entry.content.replace('\n', '<br>') | safe }}
                     </div>
-
-                    <h3>Imágenes</h3>
-                    <!-- Imágenes -->
+                    
+                    <!-- <h3>Imágenes</h3>  -->
+                    <br>
                     <div class="modal-section-images">
                         <div class="images">
                             {% for foto in entry.fotos %}
@@ -103,7 +103,7 @@
                         </div>
                     </div>
 
-                    <h3>Documentos</h3>
+                    <h3>Archivos adjuntos</h3>
                     <!-- Archivos -->
                     <div class="modal-section-attachments">
                         <div class="files-container">
@@ -167,7 +167,8 @@
                     <div>{{ entry.content.replace('\n', '<br>') | safe }}</div>
 
                     <!-- Mostrar imágenes -->
-                    <h3>Imágenes</h3>
+                    <!-- <h3>Imágenes</h3>  -->
+                    <br>
                     <div class="modal-section-images">
                         <div class="images">
                             {% for foto in entry.fotos %}
@@ -179,7 +180,7 @@
                     </div>
 
                     <!-- Mostrar documentos -->
-                    <h3>Documentos</h3>
+                    <h3>Archivos adjuntos</h3>
                     <div class="modal-section-attachments">
                         <div class="files-container">
                             {% for file in entry.documentos %}
@@ -291,6 +292,10 @@
     <button id="closePdfViewer" class="back-button">Cerrar PDF</button>
 </div>
 
+<div id="imageViewer" class="viewer">
+    <span class="close">&times;</span>
+    <img id="viewerImage" src="" alt="Visor de imagen">
+</div>
 
 
 {% endblock %}

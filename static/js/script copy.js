@@ -37,6 +37,7 @@ closeModalButton.addEventListener('click', () => {
     cueError.style.display = 'none';  // Ocultar mensaje de error
 }); */
 
+
 addEntryButton.addEventListener('click', async () => {
     try {
         // Hacer la solicitud al endpoint para obtener la URL
@@ -349,25 +350,11 @@ cancelButton.addEventListener('click', () => {
         }
     
         // Detectar el clic en una imagen para ampliarla o reducirla
-        document.addEventListener('click', function (event) {
-            if (event.target.tagName.toLowerCase() === 'img' && event.target.classList.contains('img-adjunta')) {
-                const viewer = document.getElementById('imageViewer');
-                const viewerImage = document.getElementById('viewerImage');
-                viewerImage.src = event.target.src;
-                viewer.style.display = 'flex';
-        
-                // Bloquear el scroll
-                document.body.classList.add('no-scroll');
-            }
-        });
-        
-        document.querySelector('.close').addEventListener('click', function () {
-            const viewer = document.getElementById('imageViewer');
-            viewer.style.display = 'none';
-        
-            // Restaurar el scroll
-            document.body.classList.remove('no-scroll');
-        });
+        if (event.target.tagName.toLowerCase() === 'img' && event.target.classList.contains('img-adjunta')) {
+            const image = event.target;
+            // Alternar la clase 'enlarged' para ampliar o reducir la imagen
+            image.classList.toggle('enlarged');
+        }
     });
     
     
