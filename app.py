@@ -766,7 +766,7 @@ def validate_cue():
 
 
 
-ODK_URL = "https://odkcorporacionpb.ddns.net"
+ODK_URL = "https://odk.paloblancofreshfoods.com.gt"
 ODK_USERNAME = "admin@paloblancofresh.com"
 ODK_PASSWORD = "@dminodk.1"
 ACCESS_TOKEN = None  # Token global para ODK

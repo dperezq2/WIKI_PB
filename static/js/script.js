@@ -37,53 +37,73 @@ closeModalButton.addEventListener('click', () => {
     cueError.style.display = 'none';  // Ocultar mensaje de error
 }); */
 
-addEntryButton.addEventListener('click', async () => {
-    try {
-        // Hacer la solicitud al endpoint para obtener la URL
-        const response = await fetch('search/get_form_url');
-        
-        if (!response.ok) {
-            throw new Error(`Error al obtener la URL: ${response.statusText}`);
-        }
-        
-        const data = await response.json();
-        const odkFormularioUrl = data.url; // Extraer la URL del JSON
+const closeIframeBtn = document.getElementById('closeIframeBtn');
+    const iframeOverlay = document.getElementById('iframeOverlay');
+    const iframe = document.getElementById('formIframe');
 
-        // Verificar si la URL está configurada
-        if (odkFormularioUrl && odkFormularioUrl !== '#') {
-            // Intentar abrir la URL en una nueva pestaña
-            const odkWindow = window.open(odkFormularioUrl, '_blank');
-            
-            // Si window.open() devuelve null, significa que la ventana fue bloqueada
-            if (!odkWindow) {
-                console.error('La ventana emergente fue bloqueada. Intentando redirigir...');
-                // Intentar redirigir a la misma pestaña si no se puede abrir una nueva
-                window.location.href = odkFormularioUrl;
-            } else {
-                // Si la ventana se abrió correctamente, monitoreamos su estado
-                const checkWindowInterval = setInterval(async () => {
-                    if (odkWindow.closed) {
-                        clearInterval(checkWindowInterval);
-                        console.log('Formulario ODK enviado y ventana cerrada');
-                        
-                        // Realizar la solicitud al servidor para actualizar el caché
-                        try {
-                            await fetch('search/invalidate_cache', { method: 'POST' });
-                            console.log('Caché invalidado correctamente');
-                            // También podrías recargar la página o actualizar la vista de las entradas si es necesario
-                        } catch (error) {
-                            console.error('Error al invalidar el caché', error);
-                        }
-                    }
-                }, 1000);  // Verifica cada segundo si la ventana está cerrada
+    addEntryButton.addEventListener('click', async () => {
+        try {
+            // Hacer la solicitud al endpoint para obtener la URL del formulario
+            const response = await fetch('search/get_form_url');
+
+            if (!response.ok) {
+                throw new Error(`Error al obtener la URL: ${response.statusText}`);
             }
-        } else {
-            console.error('La URL del formulario no está configurada o es inválida.');
+
+            const data = await response.json();
+            const odkFormularioUrl = data.url; // Extraer la URL del JSON
+
+            // Verificar si la URL está configurada
+            if (odkFormularioUrl && odkFormularioUrl !== '#') {
+                // Asignar la nueva URL al iframe
+                iframe.src = odkFormularioUrl;
+
+                // Mostrar el modal y bloquear el scroll de fondo
+                iframeOverlay.style.display = "flex";
+                document.body.classList.add('no-scroll');
+
+                // Iniciar monitoreo para detectar si el formulario ha sido enviado
+                startFormSubmissionMonitor(iframe);
+            } else {
+                console.error('La URL del formulario no está configurada o es inválida.');
+            }
+        } catch (error) {
+            console.error('Error al intentar abrir el formulario:', error);
         }
-    } catch (error) {
-        console.error('Error al intentar abrir el formulario:', error);
+    });
+
+    closeIframeBtn.addEventListener('click', closeIframe);
+
+    function startFormSubmissionMonitor(iframe) {
+        const checkInterval = setInterval(async () => {
+            try {
+                // Intenta acceder al contenido del iframe para verificar si el formulario ha cambiado
+                if (iframe.contentWindow.location.href !== iframe.src) {
+                    console.log('Formulario ODK enviado');
+                    clearInterval(checkInterval);
+                    closeIframe();
+                }
+            } catch (error) {
+                console.warn('No se puede acceder al contenido del iframe (posible restricción de CORS)');
+            }
+        }, 1000); // Verifica cada segundo
     }
-});
+
+    async function closeIframe() {
+        iframeOverlay.style.display = "none";
+        document.body.classList.remove('no-scroll'); // Desbloquear scroll
+
+        // Limpiar la URL del iframe para evitar problemas de cache
+        iframe.src = '';
+
+        // Invalidar caché en Redis
+        try {
+            await fetch('search/invalidate_cache', { method: 'POST' });
+            console.log('Caché invalidado correctamente');
+        } catch (error) {
+            console.error('Error al invalidar el caché', error);
+        }
+    }
 
 
 
